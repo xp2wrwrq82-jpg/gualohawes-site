@@ -9,15 +9,15 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="SYCSTEM">
 <meta property="og:description" content="Private beta. Request access.">
-<meta property="og:url" content="https://gualohawes.art/sycstem/">
-<meta property="og:image" content="https://gualohawes.art/sycstem/og.png">
+<meta property="og:url" content="https://sycstem.vercel.app/">
+<meta property="og:image" content="https://sycstem.vercel.app/sycstem/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SYCSTEM">
 <meta name="twitter:description" content="Private beta. Request access.">
-<meta name="twitter:image" content="https://gualohawes.art/sycstem/og.png">
-<link rel="icon" href="mark.svg" type="image/svg+xml">
+<meta name="twitter:image" content="https://sycstem.vercel.app/sycstem/og.png">
+<link rel="icon" href="/sycstem/mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -154,7 +154,7 @@
   </div>
 </main>
 
-<footer><a href="https://www.instagram.com/gualohawes/" target="_blank" rel="noopener">@gualohawes</a><a href="/">gualohawes.art</a></footer>
+<footer><a href="https://www.instagram.com/gualohawes/" target="_blank" rel="noopener">@gualohawes</a><a href="https://gualohawes.vercel.app/">gualohawes</a></footer>
 
 <script>
 (function () {
@@ -204,7 +204,7 @@
   });
 
   $('share').addEventListener('click', function () {
-    var url = 'https://gualohawes.art/sycstem/', b = this;
+    var url = 'https://sycstem.vercel.app/', b = this;
     function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy the link'; }, 1600); }
     if (navigator.share) { navigator.share({ title: 'SYCSTEM', url: url }).catch(function () {}); return; }
     if (navigator.clipboard) navigator.clipboard.writeText(url).then(ok, function () { prompt('Copy:', url); }); else prompt('Copy:', url);
