@@ -153,33 +153,41 @@
 
   /* ── the floating field: capsules at depths 0 (far) … 1 (near); the lens focuses at 0.42 ── */
   var field = $('field'), caps = [], W = innerWidth, H = innerHeight, small = W < 640, calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var N = small ? 15 : 22, FOCUS = 0.42, a32 = 0x5EED1E;
+  var N = small ? 20 : 28, FOCUS = 0.42, a32 = 0x5EED1E;
   function rnd() { a32 = (a32 + 0x6D2B79F5) | 0; var t = Math.imul(a32 ^ (a32 >>> 15), 1 | a32); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+  // sizes follow the screen; every capsule lives OUTSIDE the words (the card), bigger and softer ones further out
+  var nBlue = 0, K = Math.max(0.6, Math.min(1.15, Math.min(W, H) / 820));
+  function place(c) {
+    var card = document.querySelector('.card').getBoundingClientRect(), cx = card.left + card.width / 2, cy = card.top + card.height / 2;
+    var hw = Math.min(W * 0.48, card.width / 2 + 24), hh = card.height / 2 + 30, gap = c.size * (0.28 + c.z * 0.25);
+    var ex = hw + gap + c.out * Math.max(40, (W / 2 - hw) * 0.9), ey = hh + gap + c.out * Math.max(40, (H / 2 - hh) * 0.9);
+    c.px = cx + Math.cos(c.ang) * ex; c.py = cy + Math.sin(c.ang) * ey;
+  }
   for (var i = 0; i < N; i++) {
     // every 4th capsule sits on the focal plane (crisp); the rest spread from far (small, soft) to near (big, very soft)
-    var z = i % 4 === 1 ? FOCUS + (rnd() - 0.5) * 0.06 : Math.pow(rnd(), 0.85), size = (small ? 30 : 38) + z * (small ? 150 : 240), el = document.createElement('div');
-    var kind = rnd(); el.className = 'cap' + (kind > 0.87 ? ' blue' : kind > 0.68 ? ' glass' : '');
+    var z = i % 4 === 1 ? FOCUS + (rnd() - 0.5) * 0.06 : Math.pow(rnd(), 0.85), size = ((small ? 30 : 38) + z * (small ? 150 : 240)) * K, el = document.createElement('div');
+    var kind = rnd(), blue = kind > 0.9 && nBlue < (small ? 2 : 3); if (blue) nBlue++;   // two or three blue accents, never more
+    el.className = 'cap' + (blue ? ' blue' : kind > 0.66 ? ' glass' : '');
     el.style.width = Math.round(size * 0.59) + 'px'; el.style.height = Math.round(size) + 'px';
-    var blur = Math.abs(z - FOCUS) * (small ? 16 : 24);
+    var blur = Math.abs(z - FOCUS) * (small ? 16 : 24) * K;
     el.style.filter = blur < 0.4 ? 'none' : 'blur(' + blur.toFixed(1) + 'px)';
     el.style.opacity = (0.6 + 0.4 * Math.min(1, z * 1.6)).toFixed(2);
     el.style.zIndex = Math.round(z * 100);
-    // spaced around the words: an even turn of the circle each, a random distance out (near ones further out)
-    var ang = (i / N) * Math.PI * 2 + (rnd() - 0.5) * 0.5, rad = 0.36 + z * 0.16 + rnd() * 0.22;
-    var x = 0.5 + Math.cos(ang) * rad * (small ? 0.95 : 0.78), y = 0.5 + Math.sin(ang) * rad * (small ? 0.62 : 0.82);
-    caps.push({ el: el, z: z, x: x, y: y, rot: (rnd() < 0.5 ? -1 : 1) * 24.5 + (rnd() - 0.5) * 30, sp: 0.04 + rnd() * 0.06, ph: rnd() * 6.28, amp: 10 + z * 26, size: size });
-    field.appendChild(el);
+    var c = { el: el, z: z, ang: (i / N) * Math.PI * 2 + (rnd() - 0.5) * 0.45, out: rnd(), rot: (rnd() < 0.5 ? -1 : 1) * 24.5 + (rnd() - 0.5) * 30, sp: 0.04 + rnd() * 0.06, ph: rnd() * 6.28, amp: (8 + z * 20) * K, size: size };
+    caps.push(c); field.appendChild(el);
   }
+  function layout() { W = innerWidth; H = innerHeight; caps.forEach(place); }
+  layout(); setTimeout(layout, 400); if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   var px = 0, py = 0, tx = 0, ty = 0;
   addEventListener('pointermove', function (e) { tx = e.clientX / W - 0.5; ty = e.clientY / H - 0.5; }, { passive: true });
-  addEventListener('resize', function () { W = innerWidth; H = innerHeight; });
+  addEventListener('resize', layout);
   function frame(t) {
     t /= 1000; px += (tx - px) * 0.04; py += (ty - py) * 0.04;
     for (var k = 0; k < caps.length; k++) {
       var c = caps[k], par = (c.z - FOCUS) * 70;
       var dx = Math.sin(t * c.sp + c.ph) * c.amp - px * par, dy = Math.cos(t * c.sp * 0.8 + c.ph) * c.amp * 0.8 - py * par;
       var r = c.rot + Math.sin(t * c.sp * 0.6 + c.ph) * 6;
-      c.el.style.transform = 'translate3d(' + (c.x * W - c.size * 0.3 + dx).toFixed(1) + 'px,' + (c.y * H - c.size * 0.5 + dy).toFixed(1) + 'px,0) rotate(' + r.toFixed(2) + 'deg)';
+      c.el.style.transform = 'translate3d(' + (c.px - c.size * 0.3 + dx).toFixed(1) + 'px,' + (c.py - c.size * 0.5 + dy).toFixed(1) + 'px,0) rotate(' + r.toFixed(2) + 'deg)';
     }
     if (!calm) requestAnimationFrame(frame);
   }
