@@ -4,210 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SYCSTEM</title>
-<meta name="description" content="Private beta. Request access.">
-<meta name="theme-color" content="#050505">
+<meta name="description" content="Private beta. Request early access.">
+<meta name="theme-color" content="#f2f3f5">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SYCSTEM">
-<meta property="og:description" content="Private beta. Request access.">
-<meta property="og:url" content="https://sycstem.vercel.app/">
-<meta property="og:image" content="https://sycstem.vercel.app/sycstem/og.png">
+<meta property="og:description" content="Private beta. Request early access.">
+<meta property="og:url" content="https://gualo.site/sycstem/">
+<meta property="og:image" content="https://gualo.site/sycstem/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SYCSTEM">
-<meta name="twitter:description" content="Private beta. Request access.">
-<meta name="twitter:image" content="https://sycstem.vercel.app/sycstem/og.png">
+<meta name="twitter:description" content="Private beta. Request early access.">
+<meta name="twitter:image" content="https://gualo.site/sycstem/og.png">
 <link rel="icon" href="/sycstem/mark.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Michroma&display=swap" rel="stylesheet">
 <style>
   :root {
-    --void: #050505; --ink: #e7e7e2; --dim: rgba(231,231,226,.56); --faint: rgba(231,231,226,.14); --hair: rgba(231,231,226,.08);
-    --blue: #1f38ff; --blue-ink: #7d8dff;
-    --disp: 'Michroma', 'Eurostile', 'Helvetica Neue', Arial, sans-serif;
+    --bg: #f2f3f5; --ink: #0e0f11; --dim: rgba(14,15,17,.52); --faint: rgba(14,15,17,.12); --blue: #1f38ff;
+    --sans: 'Inter', 'Helvetica Neue', system-ui, -apple-system, Arial, sans-serif;
     --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-    --sans: 'Avenir Next', 'Helvetica Neue', system-ui, -apple-system, Arial, sans-serif;
+    --disp: 'Michroma', 'Eurostile', 'Helvetica Neue', Arial, sans-serif;
     --ease: cubic-bezier(.22,.61,.36,1);
-    color-scheme: dark;
+    color-scheme: light;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { min-height: 100%; background: var(--void); color: var(--ink); }
-  body { font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden;
-    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0); }
-  ::selection { background: var(--blue); color: #fff; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; letter-spacing: -.011em; }
+  ::selection { background: var(--ink); color: #fff; }
 
-  /* the room: a slow light behind everything, no texture painted on */
-  .glow { position: fixed; inset: -20vmax; pointer-events: none; z-index: 0;
-    background: radial-gradient(42vmax 34vmax at 50% 42%, rgba(31,56,255,.20), transparent 70%),
-                radial-gradient(30vmax 24vmax at 50% 46%, rgba(231,231,226,.05), transparent 70%);
-    animation: breathe 9s var(--ease) infinite alternate; }
-  @keyframes breathe { from { opacity: .65; transform: scale(.96); } to { opacity: 1; transform: scale(1.04); } }
-  .floor { position: fixed; left: 0; right: 0; bottom: 0; height: 38vh; pointer-events: none; z-index: 0; opacity: .5;
-    background: linear-gradient(to top, rgba(5,5,5,1), rgba(5,5,5,0) 70%),
-                repeating-linear-gradient(90deg, var(--hair) 0 1px, transparent 1px 64px);
-    transform: perspective(420px) rotateX(62deg); transform-origin: 50% 100%; }
+  /* the room — a soft studio light, a little darker at the edges */
+  .room { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 38%, #ffffff 0%, #f4f5f7 45%, #e6e8eb 100%); }
 
-  main { position: relative; z-index: 2; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; padding: 72px 20px 96px; text-align: center; }
-  .top { position: fixed; z-index: 3; top: calc(22px + env(safe-area-inset-top, 0)); left: 24px; right: 24px;
-    display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px;
-    letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
-  .top .live { display: inline-flex; align-items: center; gap: 9px; }
-  .top .live i { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 10px var(--blue); animation: pulse 2.4s var(--ease) infinite; }
-  @keyframes pulse { 50% { opacity: .35; } }
+  /* floating capsules — the mark's own shape, scattered through depth. near and far ones are out of focus */
+  .field { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .cap { position: absolute; left: 0; top: 0; border-radius: 999px; will-change: transform;
+    background: linear-gradient(150deg, #ffffff 0%, #f3f4f6 38%, #dfe2e6 78%, #cfd3d9 100%);
+    box-shadow: inset 2px 3px 6px rgba(255,255,255,.95), inset -4px -8px 14px rgba(120,128,140,.22), 0 22px 40px rgba(40,46,60,.13), 0 6px 12px rgba(40,46,60,.07); }
+  .cap.blue { background: linear-gradient(150deg, #8d9bff 0%, #4a5dff 40%, #1f38ff 75%, #1528c9 100%);
+    box-shadow: inset 2px 3px 8px rgba(255,255,255,.55), inset -4px -8px 14px rgba(8,16,90,.35), 0 22px 44px rgba(31,56,255,.22), 0 6px 12px rgba(31,56,255,.12); }
+  .cap.glass { background: linear-gradient(150deg, rgba(255,255,255,.75), rgba(230,233,238,.35));
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,.9), inset -2px -4px 10px rgba(120,128,140,.18), 0 18px 34px rgba(40,46,60,.08); }
 
-  /* the mark: four capsules that drift apart and lock back, as if something inside is turning on */
-  .mark { width: min(38vw, 190px); aspect-ratio: 1000/991.86; position: relative; margin-bottom: 44px; perspective: 900px; }
-  .mark svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 22px rgba(31,56,255,.35)); transform: rotateX(8deg) rotateY(-10deg); animation: tilt 14s ease-in-out infinite alternate; }
-  @keyframes tilt { to { transform: rotateX(-6deg) rotateY(10deg); } }
-  .mark path { fill: var(--ink); transform-box: fill-box; transform-origin: center; animation: drift 7s var(--ease) infinite; }
-  .mark path:nth-child(1) { --dx: -7px; --dy: -7px; }
-  .mark path:nth-child(2) { --dx:  7px; --dy: -7px; animation-delay: .15s; }
-  .mark path:nth-child(3) { --dx: -7px; --dy:  7px; animation-delay: .3s; }
-  .mark path:nth-child(4) { --dx:  7px; --dy:  7px; animation-delay: .45s; }
-  @keyframes drift { 0%, 62%, 100% { transform: translate(0,0); opacity: 1; } 74% { transform: translate(var(--dx), var(--dy)); opacity: .82; } 86% { transform: translate(0,0); opacity: 1; } }
+  .top { position: fixed; z-index: 3; top: calc(24px + env(safe-area-inset-top, 0)); left: 26px; right: 26px; display: flex; justify-content: space-between; align-items: center; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+  .brand svg { width: 15px; height: 15px; }
+  .brand span { font-family: var(--disp); font-size: 10px; letter-spacing: .26em; }
+  .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); display: inline-flex; align-items: center; gap: 8px; }
+  .tag i { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
 
-  h1 { font-family: var(--disp); font-weight: 400; font-size: clamp(22px, 6vw, 34px); letter-spacing: .32em; margin-right: -.32em; }
-  .word { height: 18px; margin-top: 16px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .3em; text-transform: uppercase; color: var(--blue-ink); }
-  .lede { margin-top: 26px; font-size: 15px; line-height: 1.6; color: var(--dim); max-width: 30ch; }
+  main { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 20px; text-align: center; }
+  .card { width: 100%; max-width: 440px; }
+  h1 { font-weight: 500; font-size: clamp(28px, 6.4vw, 44px); line-height: 1.06; letter-spacing: -.035em; text-wrap: balance; }
+  .sub { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim); }
 
-  form { width: 100%; max-width: 380px; margin-top: 34px; display: flex; flex-direction: column; gap: 10px; }
-  .field { position: relative; }
-  input[type=email], input[type=text] { width: 100%; font: 15px/1.2 var(--sans); color: var(--ink); background: rgba(231,231,226,.04);
-    border: 1px solid var(--faint); border-radius: 12px; padding: 16px 16px; outline: none; -webkit-appearance: none;
-    transition: border-color .25s var(--ease), background .25s var(--ease); }
-  input::placeholder { color: rgba(231,231,226,.38); }
-  input:focus { border-color: rgba(125,141,255,.8); background: rgba(31,56,255,.06); }
-  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 4px 0 2px; }
-  .chips span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
-    border: 1px solid var(--faint); border-radius: 999px; padding: 7px 11px; cursor: pointer; user-select: none;
-    transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease); }
-  .chips span.on { color: #fff; border-color: var(--blue); background: rgba(31,56,255,.22); }
-  .chips-label { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(231,231,226,.36); margin-top: 6px; }
+  form { margin-top: 30px; }
+  .pill { display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 20px; border-radius: 999px;
+    background: rgba(255,255,255,.72); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    box-shadow: inset 0 0 0 1px rgba(14,15,17,.08), 0 18px 40px rgba(40,46,60,.10); transition: box-shadow .25s var(--ease); }
+  .pill:focus-within { box-shadow: inset 0 0 0 1px rgba(31,56,255,.55), 0 18px 44px rgba(31,56,255,.14); }
+  .pill input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: 16px/1.2 var(--sans); color: var(--ink); padding: 12px 0; letter-spacing: -.01em; }
+  .pill input::placeholder { color: rgba(14,15,17,.38); }
+  .go { flex: 0 0 auto; height: 46px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: 500 14px var(--sans); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px; transition: transform .2s var(--ease), opacity .2s; }
+  .go:hover { transform: translateX(1px); }
+  .go:disabled { opacity: .5; cursor: default; transform: none; }
+  .go svg { width: 14px; height: 14px; }
+  .msg { min-height: 16px; margin-top: 12px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .msg.bad { color: #d0243b; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-  button[type=submit] { margin-top: 6px; font: 600 15px/1 var(--sans); letter-spacing: .02em; color: #fff; background: var(--blue);
-    border: none; border-radius: 12px; padding: 17px; cursor: pointer; box-shadow: 0 10px 40px rgba(31,56,255,.35);
-    transition: transform .25s var(--ease), box-shadow .25s var(--ease), opacity .25s; }
-  button[type=submit]:hover { transform: translateY(-1px); box-shadow: 0 14px 50px rgba(31,56,255,.5); }
-  button[type=submit]:disabled { opacity: .55; cursor: default; transform: none; }
-  .msg { min-height: 18px; margin-top: 4px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
-  .msg.bad { color: #ff7a8a; }
-  .fine { margin-top: 18px; font-size: 12px; color: rgba(231,231,226,.36); }
 
-  .done { display: none; margin-top: 34px; max-width: 380px; }
-  .done .t { font-family: var(--disp); font-size: 15px; letter-spacing: .24em; text-transform: uppercase; }
-  .done .d { margin-top: 14px; font-size: 15px; line-height: 1.6; color: var(--dim); }
-  .done .share { margin-top: 24px; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink);
-    background: none; border: 1px solid var(--faint); border-radius: 999px; padding: 11px 18px; cursor: pointer; }
-  body.in form, body.in .lede { display: none; }
-  body.in .done { display: block; animation: rise .7s var(--ease); }
-  @keyframes rise { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+  /* step two (after the email) — optional, small, skippable */
+  .more { display: none; }
+  .more .row { margin-top: 18px; }
+  .more input { width: 100%; border: 0; outline: 0; font: 16px var(--sans); color: var(--ink); text-align: center; padding: 13px 16px; border-radius: 999px;
+    background: rgba(255,255,255,.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: inset 0 0 0 1px rgba(14,15,17,.08); }
+  .more input:focus { box-shadow: inset 0 0 0 1px rgba(31,56,255,.55); }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 12px; }
+  .chips span { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); padding: 8px 12px; border-radius: 999px;
+    background: rgba(255,255,255,.6); box-shadow: inset 0 0 0 1px rgba(14,15,17,.08); cursor: pointer; user-select: none; transition: all .2s var(--ease); }
+  .chips span.on { color: #fff; background: var(--ink); box-shadow: none; }
+  .more .acts { margin-top: 18px; display: flex; justify-content: center; gap: 10px; }
+  .more .acts button { font: 500 13px var(--sans); border: 0; border-radius: 999px; padding: 11px 18px; cursor: pointer; }
+  .save { background: var(--ink); color: #fff; }
+  .skip { background: transparent; color: var(--dim); }
+  .done { display: none; margin-top: 22px; font-size: 15px; line-height: 1.55; color: var(--dim); }
 
-  footer { position: relative; z-index: 3; margin-top: -70px; padding: 0 20px calc(26px + env(safe-area-inset-bottom, 0)); display: flex; justify-content: center; gap: 18px;
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: rgba(231,231,226,.34); }
+  body.s2 form, body.s3 form { display: none; }
+  body.s2 .more { display: block; animation: haze .6s var(--ease); }
+  body.s3 .more { display: none; }
+  body.s3 .done { display: block; animation: haze .6s var(--ease); }
+  @keyframes haze { from { opacity: 0; filter: blur(8px); transform: translateY(6px); } to { opacity: 1; filter: none; transform: none; } }
+
+  footer { position: fixed; z-index: 3; left: 0; right: 0; bottom: calc(20px + env(safe-area-inset-bottom, 0)); text-align: center; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(14,15,17,.36); }
   footer a { color: inherit; text-decoration: none; }
   footer a:hover { color: var(--ink); }
 
-  /* entrance: the room assembles from depth, once */
-  .rise { opacity: 0; animation: rise .9s var(--ease) forwards; }
-  .rise:nth-child(2) { animation-delay: .12s; } .rise:nth-child(3) { animation-delay: .24s; } .rise:nth-child(4) { animation-delay: .36s; } .rise:nth-child(5) { animation-delay: .48s; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } .rise { opacity: 1; } }
-  @media (max-height: 640px) { .mark { width: 110px; margin-bottom: 26px; } main { padding-top: 56px; } }
+  .card > * { opacity: 0; animation: haze .9s var(--ease) forwards; }
+  .card > :nth-child(2) { animation-delay: .1s; } .card > :nth-child(3) { animation-delay: .2s; } .card > :nth-child(4) { animation-delay: .3s; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .card > * { opacity: 1; } }
 </style>
 </head>
 <body>
-<div class="glow"></div>
-<div class="floor"></div>
-<div class="top"><span class="live"><i></i>Online</span><span>0.9</span></div>
+<div class="room"></div>
+<div class="field" id="field" aria-hidden="true"></div>
+
+<header class="top">
+  <a class="brand" href="/" aria-label="SYCSTEM">
+    <svg viewBox="0 0 1000 991.86" fill="currentColor" aria-hidden="true"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
+    <span>SYCSTEM</span>
+  </a>
+  <span class="tag"><i></i>Private beta</span>
+</header>
 
 <main>
-  <div class="mark rise" aria-hidden="true">
-    <svg viewBox="0 0 1000 991.86" xmlns="http://www.w3.org/2000/svg">
-      <path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/>
-      <path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/>
-      <path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/>
-      <path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/>
-    </svg>
-  </div>
-  <h1 class="rise">SYCSTEM</h1>
-  <div class="word rise" id="word" aria-hidden="true">&nbsp;</div>
-  <p class="lede rise">Something new for the edit.<br>Private beta — opening soon.</p>
-
-  <form class="rise" id="f" novalidate>
-    <div class="field"><input type="email" id="email" name="email" placeholder="Email" autocomplete="email" inputmode="email" required></div>
-    <div class="field"><input type="text" id="handle" name="handle" placeholder="Instagram (optional)" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
-    <div class="chips-label">You edit in</div>
-    <div class="chips" id="chips">
-      <span data-v="premiere">Premiere</span><span data-v="aftereffects">After Effects</span><span data-v="capcut">CapCut</span><span data-v="resolve">Resolve</span><span data-v="other">Other</span>
+  <div class="card">
+    <h1>Something new<br>for the edit.</h1>
+    <div class="sub">Request early access</div>
+    <form id="f" novalidate>
+      <div class="pill">
+        <input type="email" id="email" placeholder="you@email.com" autocomplete="email" inputmode="email" aria-label="Email" required>
+        <button class="go" id="go" type="submit">Join<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h9.5M8.5 3.8 12.7 8l-4.2 4.2"/></svg></button>
+      </div>
+      <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </form>
+    <div class="more" id="more">
+      <div class="sub">You're on the list</div>
+      <div class="row"><input type="text" id="handle" placeholder="@instagram (optional)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Instagram"></div>
+      <div class="chips" id="chips"><span data-v="premiere">Premiere</span><span data-v="aftereffects">After Effects</span><span data-v="capcut">CapCut</span><span data-v="resolve">Resolve</span><span data-v="other">Other</span></div>
+      <div class="acts"><button class="skip" id="skip" type="button">Skip</button><button class="save" id="save" type="button">Done</button></div>
     </div>
-    <input class="hp" type="text" name="website" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <button type="submit" id="go">Request access</button>
-    <div class="msg" id="msg" role="status" aria-live="polite"></div>
-    <div class="fine">One email when your access is ready. Nothing else.</div>
-  </form>
-
-  <div class="done" id="done">
-    <div class="t">You're on the list</div>
-    <p class="d" id="doneD">Invites go out by email. Keep an eye on your inbox.</p>
-    <button class="share" id="share" type="button">Copy the link</button>
+    <p class="done" id="done">You're on the list. Invites go out by email.</p>
   </div>
 </main>
 
-<footer><a href="https://www.instagram.com/gualohawes/" target="_blank" rel="noopener">@gualohawes</a><a href="https://gualohawes.vercel.app/">gualohawes</a></footer>
+<footer><a href="https://www.instagram.com/gualohawes/" target="_blank" rel="noopener">@gualohawes</a></footer>
 
 <script>
 (function () {
   var API = 'https://vault-y6mf.vercel.app/api/beta/signup';
   var $ = function (id) { return document.getElementById(id); };
   var q = new URLSearchParams(location.search), source = (q.get('ref') || q.get('utm_source') || (/instagram/i.test(navigator.userAgent) ? 'ig' : '') || 'direct').slice(0, 40);
-  var editor = '';
+  var email = '', editor = '';
 
-  // the world words of the units, one at a time — what it is, never said outright
-  var WORDS = ['Motion', 'Surface', 'Emulsion', 'Magnetic', 'Colour', 'Timebase', 'Matte', 'Velocity', 'Signal'], wi = 0, GL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ·';
-  function decode(el, target) {
-    var n = 0, steps = 14;
-    (function tick() {
-      var out = ''; for (var i = 0; i < target.length; i++) out += i < n * target.length / steps ? target[i] : GL[Math.floor(Math.random() * GL.length)];
-      el.textContent = out; if (n++ < steps) setTimeout(tick, 38); else el.textContent = target;
-    })();
+  /* ── the floating field: capsules at depths 0 (far) … 1 (near); the lens focuses at 0.42 ── */
+  var field = $('field'), caps = [], W = innerWidth, H = innerHeight, small = W < 640, calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N = small ? 15 : 22, FOCUS = 0.42, a32 = 0x5EED1E;
+  function rnd() { a32 = (a32 + 0x6D2B79F5) | 0; var t = Math.imul(a32 ^ (a32 >>> 15), 1 | a32); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }
+  for (var i = 0; i < N; i++) {
+    // every 4th capsule sits on the focal plane (crisp); the rest spread from far (small, soft) to near (big, very soft)
+    var z = i % 4 === 1 ? FOCUS + (rnd() - 0.5) * 0.06 : Math.pow(rnd(), 0.85), size = (small ? 30 : 38) + z * (small ? 150 : 240), el = document.createElement('div');
+    var kind = rnd(); el.className = 'cap' + (kind > 0.87 ? ' blue' : kind > 0.68 ? ' glass' : '');
+    el.style.width = Math.round(size * 0.59) + 'px'; el.style.height = Math.round(size) + 'px';
+    var blur = Math.abs(z - FOCUS) * (small ? 16 : 24);
+    el.style.filter = blur < 0.4 ? 'none' : 'blur(' + blur.toFixed(1) + 'px)';
+    el.style.opacity = (0.6 + 0.4 * Math.min(1, z * 1.6)).toFixed(2);
+    el.style.zIndex = Math.round(z * 100);
+    // spaced around the words: an even turn of the circle each, a random distance out (near ones further out)
+    var ang = (i / N) * Math.PI * 2 + (rnd() - 0.5) * 0.5, rad = 0.36 + z * 0.16 + rnd() * 0.22;
+    var x = 0.5 + Math.cos(ang) * rad * (small ? 0.95 : 0.78), y = 0.5 + Math.sin(ang) * rad * (small ? 0.62 : 0.82);
+    caps.push({ el: el, z: z, x: x, y: y, rot: (rnd() < 0.5 ? -1 : 1) * 24.5 + (rnd() - 0.5) * 30, sp: 0.04 + rnd() * 0.06, ph: rnd() * 6.28, amp: 10 + z * 26, size: size });
+    field.appendChild(el);
   }
-  var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function next() { decode($('word'), WORDS[wi++ % WORDS.length]); }
-  setTimeout(next, 900); if (!calm) setInterval(next, 2600);
+  var px = 0, py = 0, tx = 0, ty = 0;
+  addEventListener('pointermove', function (e) { tx = e.clientX / W - 0.5; ty = e.clientY / H - 0.5; }, { passive: true });
+  addEventListener('resize', function () { W = innerWidth; H = innerHeight; });
+  function frame(t) {
+    t /= 1000; px += (tx - px) * 0.04; py += (ty - py) * 0.04;
+    for (var k = 0; k < caps.length; k++) {
+      var c = caps[k], par = (c.z - FOCUS) * 70;
+      var dx = Math.sin(t * c.sp + c.ph) * c.amp - px * par, dy = Math.cos(t * c.sp * 0.8 + c.ph) * c.amp * 0.8 - py * par;
+      var r = c.rot + Math.sin(t * c.sp * 0.6 + c.ph) * 6;
+      c.el.style.transform = 'translate3d(' + (c.x * W - c.size * 0.3 + dx).toFixed(1) + 'px,' + (c.y * H - c.size * 0.5 + dy).toFixed(1) + 'px,0) rotate(' + r.toFixed(2) + 'deg)';
+    }
+    if (!calm) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 
-  $('chips').addEventListener('click', function (e) {
-    var c = e.target.closest('span'); if (!c) return;
-    var on = !c.classList.contains('on');
-    Array.prototype.forEach.call(this.children, function (x) { x.classList.remove('on'); });
-    if (on) c.classList.add('on'); editor = on ? c.dataset.v : '';
-  });
-
-  try { var saved = localStorage.getItem('syc_beta_email'); if (saved) { document.body.classList.add('in'); $('doneD').textContent = saved + ' is on the list. Invites go out by email.'; } } catch (e) {}
+  /* ── the form ── */
+  function post(body) {
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error(j && j.error || 'Something went wrong'); return j; }); });
+  }
+  try { if (localStorage.getItem('syc_beta_email')) document.body.classList.add('s3'); } catch (e) {}
 
   $('f').addEventListener('submit', function (e) {
     e.preventDefault();
-    var email = $('email').value.trim(), msg = $('msg');
-    msg.className = 'msg';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'That email doesn’t look right'; msg.className = 'msg bad'; $('email').focus(); return; }
-    $('go').disabled = true; msg.textContent = 'Sending…';
-    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, handle: $('handle').value, editor: editor, source: source, website: $('website').value }) })
-      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
-      .then(function (res) {
-        if (!res.ok || !res.j.ok) throw new Error(res.j && res.j.error || 'Something went wrong');
-        try { localStorage.setItem('syc_beta_email', email); } catch (x) {}
-        $('doneD').textContent = res.j.already ? 'You were already on the list — you’re set. Invites go out by email.' : 'Invites go out by email. Keep an eye on your inbox.';
-        document.body.classList.add('in');
-      })
-      .catch(function (err) { msg.textContent = String(err.message || err).slice(0, 80) || 'Try again'; msg.className = 'msg bad'; $('go').disabled = false; });
+    var v = $('email').value.trim(), msg = $('msg'); msg.className = 'msg';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { msg.textContent = 'Check that email'; msg.className = 'msg bad'; $('email').focus(); return; }
+    $('go').disabled = true; msg.textContent = '';
+    post({ email: v, source: source, website: $('website').value }).then(function (j) {
+      email = v; try { localStorage.setItem('syc_beta_email', v); } catch (x) {}
+      if (j.already) { $('done').textContent = 'You were already on the list. Invites go out by email.'; document.body.classList.add('s3'); }
+      else document.body.classList.add('s2');
+    }).catch(function (err) { msg.textContent = String(err.message || err).slice(0, 70); msg.className = 'msg bad'; $('go').disabled = false; });
   });
-
-  $('share').addEventListener('click', function () {
-    var url = 'https://sycstem.vercel.app/', b = this;
-    function ok() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy the link'; }, 1600); }
-    if (navigator.share) { navigator.share({ title: 'SYCSTEM', url: url }).catch(function () {}); return; }
-    if (navigator.clipboard) navigator.clipboard.writeText(url).then(ok, function () { prompt('Copy:', url); }); else prompt('Copy:', url);
+  $('chips').addEventListener('click', function (e) {
+    var c = e.target.closest('span'); if (!c) return; var on = !c.classList.contains('on');
+    Array.prototype.forEach.call(this.children, function (x) { x.classList.remove('on'); }); if (on) c.classList.add('on'); editor = on ? c.dataset.v : '';
+  });
+  function finish() { document.body.classList.remove('s2'); document.body.classList.add('s3'); }
+  $('skip').addEventListener('click', finish);
+  $('save').addEventListener('click', function () {
+    var h = $('handle').value.trim();
+    if (!h && !editor) return finish();
+    this.disabled = true; post({ email: email, handle: h, editor: editor, source: source }).then(finish, finish);
   });
 })();
 </script>
