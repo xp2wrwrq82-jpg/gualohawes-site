@@ -1,8 +1,39 @@
 {
   "routes": [
-    { "src": "/", "has": [{ "type": "host", "value": "sycstem.vercel.app" }], "dest": "/sycstem/index.html" },
-    { "src": "/beta/?", "status": 307, "headers": { "Location": "/sycstem/" } },
-    { "src": "/sycstem/og.png", "headers": { "Cache-Control": "public, max-age=86400" }, "continue": true },
-    { "handle": "filesystem" }
+    {
+      "src": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "sycstem.vercel.app"
+        }
+      ],
+      "dest": "/sycstem/index.html"
+    },
+    {
+      "src": "/beta/?",
+      "status": 307,
+      "headers": {
+        "Location": "/sycstem/"
+      }
+    },
+    {
+      "src": "/sycstem/og.png",
+      "headers": {
+        "Cache-Control": "public, max-age=86400"
+      },
+      "continue": true
+    },
+    {
+      "src": "/admin(/.*)?",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow",
+        "Cache-Control": "no-store"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    }
   ]
 }

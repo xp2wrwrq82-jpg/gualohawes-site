@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>the list</title>
+<link rel="icon" href="/sycstem/mark.svg" type="image/svg+xml">
+<style>
+  /* gualo.site/admin — the beta list, in the same white world as the teaser (VEIL): footage under a white veil,
+     the small grey mark, lowercase lines, white glass pills. No colour. */
+  :root {
+    --ink: #1d1d1f; --grey: #6e6e73; --soft: #a1a1a6; --line: #4a4a4f; --fine: #8e8e93;
+    --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --ease: cubic-bezier(.22,.61,.36,1);
+    --glass: rgba(255,255,255,.82);
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: #f5f5f6; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  ::selection { background: #1d1d1f; color: #fff; }
+  [hidden] { display: none !important; }
+
+  .reel { position: fixed; inset: -6%; z-index: 0; pointer-events: none; }
+  .reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.6s var(--ease); }
+  .reel video.on { opacity: 1; }
+  .veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 46%, rgba(255,255,255,.88) 0%, rgba(255,255,255,.85) 55%, rgba(250,250,251,.87) 100%); }
+
+  @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
+  .mark { width: 14px; height: 14px; color: var(--soft); flex: 0 0 auto; }
+
+  /* ── signed out: one line, one pill at a time ── */
+  .gate { position: relative; z-index: 2; min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px 96px; text-align: center; }
+  .gate .stage { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; animation: appear 1.2s var(--ease) both; }
+  .gate .line { margin-top: 28px; font-size: 14px; letter-spacing: .06em; color: var(--line); }
+  .gate form { width: 100%; margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+  .pill { position: relative; display: flex; align-items: center; height: 52px; border-radius: 999px; background: var(--glass);
+    backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 10px 30px rgba(30,30,40,.06); transition: box-shadow .3s var(--ease); }
+  .pill:focus-within { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.24), 0 12px 36px rgba(30,30,40,.09); }
+  .pill input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; padding: 0 0 0 22px;
+    font: 400 16px var(--sans); letter-spacing: -.01em; color: var(--ink); }
+  .pill input::placeholder { color: var(--soft); }
+  .arrow { flex: 0 0 auto; width: 36px; height: 36px; margin-right: 8px; border: 0; border-radius: 50%; cursor: pointer; background: transparent;
+    color: var(--grey); display: grid; place-items: center; transition: color .25s var(--ease), background .25s var(--ease), opacity .25s; }
+  .arrow svg { width: 15px; height: 15px; }
+  .pill:focus-within .arrow, .arrow:hover { color: var(--ink); background: rgba(0,0,0,.04); }
+  .arrow:disabled { opacity: .4; cursor: default; }
+  .note { margin-top: 16px; min-height: 16px; font-size: 12px; color: var(--grey); }
+  .note.bad { color: #b3261e; }
+  .quiet { margin-top: 18px; border: 0; background: none; font: 400 12px var(--sans); letter-spacing: .04em; color: var(--fine); cursor: pointer; }
+  .quiet:hover { color: var(--ink); }
+  .fine { position: fixed; z-index: 2; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center;
+    font-size: 11px; letter-spacing: .04em; color: var(--fine); pointer-events: none; }
+
+  /* ── signed in: the list ── */
+  .room { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top, 0px)) 20px 120px; animation: appear 1s var(--ease) both; }
+  .top { display: flex; align-items: center; gap: 12px; }
+  .top .who { flex: 1; min-width: 0; font-size: 12px; letter-spacing: .04em; color: var(--fine); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .head { margin-top: 56px; text-align: center; }
+  .count { font-size: 56px; font-weight: 300; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+  .count-l { margin-top: 12px; font-size: 14px; letter-spacing: .06em; color: var(--line); }
+  .acts { margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .btn { height: 40px; padding: 0 20px; border: 0; border-radius: 999px; cursor: pointer; background: var(--glass);
+    backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 8px 24px rgba(30,30,40,.05);
+    font: 400 13px var(--sans); letter-spacing: .02em; color: var(--ink); transition: box-shadow .25s var(--ease), opacity .25s; }
+  .btn:hover { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.22), 0 10px 28px rgba(30,30,40,.08); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.plain { background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--fine); padding: 0 6px; height: auto; font-size: 12px; letter-spacing: .04em; }
+  .btn.plain:hover { color: var(--ink); }
+  .status { margin-top: 14px; min-height: 16px; text-align: center; font-size: 12px; color: var(--fine); }
+  .status.bad { color: #b3261e; }
+
+  .list { margin-top: 40px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(24px) saturate(1.2); -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.08), 0 18px 50px rgba(30,30,40,.06); overflow: hidden; }
+  .row { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 4px 16px; align-items: baseline; padding: 16px 22px; }
+  .row + .row { box-shadow: inset 0 .5px 0 rgba(0,0,0,.08); }
+  .row .no { font-size: 12px; color: var(--soft); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+  .row .em { font-size: 15px; color: var(--ink); overflow-wrap: anywhere; }
+  .row .em a { color: inherit; text-decoration: none; }
+  .row .at { font-size: 12px; color: var(--fine); white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+  .row .meta { grid-column: 2 / 4; font-size: 12px; letter-spacing: .02em; color: var(--grey); }
+  .row .meta a { color: inherit; text-decoration: none; }
+  .row .meta a:hover, .row .em a:hover { color: var(--ink); }
+  .row.new .no { color: var(--ink); }
+  .row.new .no::after { content: " · new"; color: var(--fine); }
+  .empty { padding: 44px 22px; text-align: center; font-size: 14px; letter-spacing: .06em; color: var(--line); }
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 52px minmax(0, 1fr); padding: 14px 18px; }
+    .row .at { grid-column: 2; text-align: left; }
+    .row .meta { grid-column: 2; }
+    .count { font-size: 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="reel" aria-hidden="true"><video id="vid" muted loop playsinline autoplay preload="auto" disablepictureinpicture></video></div>
+<div class="veil"></div>
+
+<!-- signed out -->
+<main class="gate" id="gate" hidden>
+  <div class="stage">
+    <svg class="mark" viewBox="0 0 1000 991.86" fill="currentColor" aria-hidden="true"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
+    <p class="line" id="gline">the list.</p>
+
+    <form id="fLogin" novalidate>
+      <div class="pill"><input type="email" id="lEmail" placeholder="Email" autocomplete="username" inputmode="email" aria-label="Email" required></div>
+      <div class="pill">
+        <input type="password" id="lPass" placeholder="Password" autocomplete="current-password" aria-label="Password" required>
+        <button class="arrow" id="lGo" type="submit" aria-label="Sign in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+      </div>
+    </form>
+
+    <form id="fForgot" novalidate hidden>
+      <div class="pill">
+        <input type="email" id="fEmail" placeholder="Email" autocomplete="username" inputmode="email" aria-label="Email" required>
+        <button class="arrow" id="fGo" type="submit" aria-label="Send link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+      </div>
+    </form>
+
+    <form id="fReset" novalidate hidden>
+      <div class="pill">
+        <input type="password" id="rPass" placeholder="New password" autocomplete="new-password" aria-label="New password" minlength="8" required>
+        <button class="arrow" id="rGo" type="submit" aria-label="Save"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+      </div>
+    </form>
+
+    <p class="note" id="gnote" role="status" aria-live="polite"></p>
+    <button class="quiet" id="toForgot" type="button">forgot?</button>
+    <button class="quiet" id="toLogin" type="button" hidden>back</button>
+  </div>
+</main>
+
+<!-- signed in -->
+<main class="room" id="room" hidden>
+  <div class="top">
+    <svg class="mark" viewBox="0 0 1000 991.86" fill="currentColor" aria-hidden="true"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
+    <span class="who" id="who"></span>
+    <button class="btn plain" id="out" type="button">sign out</button>
+  </div>
+  <div class="head">
+    <div class="count" id="count">–</div>
+    <div class="count-l" id="countL">on the list.</div>
+    <div class="acts">
+      <button class="btn" id="csv" type="button">download csv</button>
+      <button class="btn" id="test" type="button">send test alert</button>
+      <button class="btn" id="refresh" type="button">refresh</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+  <div class="list" id="list"></div>
+</main>
+
+<p class="fine" id="fine">Technology by Gualo Hawes</p>
+
+<script>
+(function () {
+  var API = 'https://vault-y6mf.vercel.app/api/beta/admin';
+  var KEY = 'syc_admin', SEEN = 'syc_admin_seen';
+  var $ = function (id) { return document.getElementById(id); };
+  var session = null; try { session = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+
+  /* the same footage as the teaser, one loop per visit */
+  var LOOPS = [{ mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }];
+  var pick = 0; try { var ss = sessionStorage.getItem('syc_admin_frame'); pick = ss !== null ? +ss % 2 : Math.floor(Math.random() * 2); sessionStorage.setItem('syc_admin_frame', pick); } catch (e) {}
+  var vid = $('vid'); vid.style.filter = LOOPS[pick].f; vid.src = LOOPS[pick].mp4; vid.muted = true;
+  vid.addEventListener('playing', function () { vid.classList.add('on'); });
+  var play = function () { var p = vid.play(); if (p && p.catch) p.catch(function () {}); };
+  play(); document.addEventListener('touchstart', play, { once: true, passive: true });
+
+  function call(path, opts) {
+    opts = opts || {}; var h = { 'Content-Type': 'application/json' };
+    if (session && session.token) h.Authorization = 'Bearer ' + session.token;
+    return fetch(API + path, { method: opts.method || 'GET', headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401 && path !== '/login' && path !== '/reset') { signOut('signed out — sign in again.'); throw new Error('signed out'); }
+        if (opts.raw) { if (!r.ok) throw new Error('Something went wrong.'); return r; }
+        return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw new Error(j.error || 'Something went wrong.'); return j; });
+      });
+  }
+  function note(t, bad) { var n = $('gnote'); n.textContent = t || ''; n.className = 'note' + (bad ? ' bad' : ''); }
+  function status(t, bad) { var s = $('status'); s.textContent = t || ''; s.className = 'status' + (bad ? ' bad' : ''); }
+
+  /* ── gate ── */
+  function gate(mode) {
+    $('room').hidden = true; $('gate').hidden = false; $('fine').hidden = false;
+    $('fLogin').hidden = mode !== 'login'; $('fForgot').hidden = mode !== 'forgot'; $('fReset').hidden = mode !== 'reset';
+    $('toForgot').hidden = mode !== 'login'; $('toLogin').hidden = mode === 'login';
+    $('gline').textContent = mode === 'forgot' ? 'we’ll email you a link.' : mode === 'reset' ? 'set a new password.' : 'the list.';
+    var f = mode === 'forgot' ? $('fEmail') : mode === 'reset' ? $('rPass') : ($('lEmail').value ? $('lPass') : $('lEmail'));
+    setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) {} }, 60);
+  }
+  function signIn(j) { session = { token: j.token, email: j.email }; try { localStorage.setItem(KEY, JSON.stringify(session)); } catch (e) {} room(); }
+  function signOut(msg) { session = null; try { localStorage.removeItem(KEY); } catch (e) {} gate('login'); note(msg || ''); }
+
+  $('fLogin').addEventListener('submit', function (e) {
+    e.preventDefault(); var em = $('lEmail').value.trim(), pw = $('lPass').value;
+    if (!em || !pw) { note('email and password.', true); return; }
+    $('lGo').disabled = true; note('');
+    call('/login', { method: 'POST', body: { email: em, password: pw } }).then(function (j) { $('lPass').value = ''; signIn(j); })
+      .catch(function (err) { note(err.message, true); }).then(function () { $('lGo').disabled = false; });
+  });
+  $('fForgot').addEventListener('submit', function (e) {
+    e.preventDefault(); var em = $('fEmail').value.trim(); if (!em) return;
+    $('fGo').disabled = true; note('');
+    call('/reset', { method: 'POST', body: { email: em } }).then(function () { note('if that’s the admin email, a link is in its inbox.'); })
+      .catch(function (err) { note(err.message, true); }).then(function () { $('fGo').disabled = false; });
+  });
+  var resetToken = null;
+  $('fReset').addEventListener('submit', function (e) {
+    e.preventDefault(); var pw = $('rPass').value;
+    if (pw.length < 8) { note('use at least 8 characters.', true); return; }
+    $('rGo').disabled = true; note('');
+    call('/reset', { method: 'POST', body: { token: resetToken, password: pw } }).then(function (j) { $('rPass').value = ''; history.replaceState(null, '', location.pathname); signIn(j); })
+      .catch(function (err) { note(err.message, true); }).then(function () { $('rGo').disabled = false; });
+  });
+  $('toForgot').addEventListener('click', function () { $('fEmail').value = $('lEmail').value; note(''); gate('forgot'); });
+  $('toLogin').addEventListener('click', function () { note(''); history.replaceState(null, '', location.pathname); gate('login'); });
+
+  /* ── the list ── */
+  var FROM = { ig: 'Instagram', site: 'gualo.site', direct: 'direct link', test: 'test' };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var when = function (iso) { var d = new Date(iso); return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toLowerCase(); };
+  var place = function (n) { return 'no. ' + String(n).padStart(3, '0'); };
+
+  function room() {
+    $('gate').hidden = true; $('room').hidden = false; $('fine').hidden = true;
+    $('who').textContent = session.email || ''; load();
+  }
+  function load() {
+    return call('/list').then(function (j) {
+      var seen = 0; try { seen = +localStorage.getItem(SEEN) || 0; } catch (e) {}
+      $('count').textContent = j.total;
+      status(j.alerts.on ? 'email alerts on → ' + (j.alerts.to || '') : 'email alerts off — the key isn’t set on Vercel yet.', !j.alerts.on);
+      $('list').innerHTML = j.rows.length ? j.rows.map(function (r) {
+        var meta = [];
+        if (r.handle) meta.push('<a href="https://instagram.com/' + encodeURIComponent(r.handle) + '" target="_blank" rel="noreferrer">@' + esc(r.handle) + '</a>');
+        meta.push('from ' + esc(FROM[r.source] || r.source || 'direct link'));
+        return '<div class="row' + (seen && r.n > seen ? ' new' : '') + '"><span class="no">' + place(r.n) + '</span>' +
+          '<span class="em"><a href="mailto:' + esc(r.email) + '">' + esc(r.email) + '</a></span><span class="at">' + when(r.at) + '</span>' +
+          '<span class="meta">' + meta.join(' · ') + '</span></div>';
+      }).join('') : '<div class="empty">no one yet. post the link.</div>';
+      try { localStorage.setItem(SEEN, String(j.total)); } catch (e) {}
+    }).catch(function (err) { if (err.message !== 'signed out') status(err.message, true); });
+  }
+  $('refresh').addEventListener('click', function () { status('…'); load(); });
+  $('out').addEventListener('click', function () { signOut(''); });
+  $('test').addEventListener('click', function () {
+    var b = this; b.disabled = true; status('sending…');
+    call('/test-alert', { method: 'POST' }).then(function (j) { status('sent to ' + j.to + ' — check your inbox (and promotions / spam the first time).'); })
+      .catch(function (err) { status(err.message, true); }).then(function () { b.disabled = false; });
+  });
+  $('csv').addEventListener('click', function () {
+    var b = this; b.disabled = true;
+    call('/csv', { raw: true }).then(function (r) { return r.blob(); }).then(function (blob) {
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'sycstem-beta-list-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }).catch(function (err) { status(err.message, true); }).then(function () { b.disabled = false; });
+  });
+  // keep it current while it's open
+  setInterval(function () { if (session && !document.hidden) load(); }, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && session) { load(); play(); } });
+
+  /* start: a reset link, a saved session, or the sign-in */
+  var m = location.hash.match(/^#reset=([\w.-]+)$/);
+  if (m) { resetToken = m[1]; gate('reset'); }
+  else if (session && session.token) room();
+  else gate('login');
+})();
+</script>
+</body>
+</html>
