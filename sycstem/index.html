@@ -32,8 +32,8 @@
 
   /* one frame of footage behind the glass per visit (the next visit shows the next one): still, softly out of focus, washed in white */
   .reel { position: fixed; inset: -6%; z-index: 0; pointer-events: none; }
-  .reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(5px) saturate(.9); transition: opacity 1.6s var(--ease); }
-  .reel img.on { opacity: 1; }
+  .reel img, .reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(5px) saturate(.9); transition: opacity 1.6s var(--ease); }
+  .reel img.on, .reel video.on { opacity: 1; }
   .veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: radial-gradient(120% 90% at 50% 46%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.82) 55%, rgba(250,250,251,.85) 100%); }
 
@@ -78,7 +78,7 @@
 </style>
 </head>
 <body>
-<div class="reel" id="reel" aria-hidden="true"><img id="frame" alt=""></div>
+<div class="reel" id="reel" aria-hidden="true"><img id="frame" alt=""><video id="vid" muted loop playsinline autoplay preload="auto" disablepictureinpicture></video></div>
 <div class="veil"></div>
 
 <main>
@@ -118,13 +118,21 @@
 
   /* the frame for this visit: the same one for the whole session, the next one on the next visit */
   // each frame lifted to the same whiteness: the night forest is dark, the glitch is already bright
-  var FRAMES = [{ src: '/sycstem/bg/1.webp', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/2.webp', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }], pick = 0;
+  var FRAMES = [{ src: '/sycstem/bg/forest.webp', mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/glitch.webp', mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }], pick = 0;
   try {
     var ss = sessionStorage.getItem('syc_frame');
     if (ss !== null) pick = +ss % FRAMES.length;
     else { var last = localStorage.getItem('syc_frame_last'); pick = last === null ? Math.floor(Math.random() * FRAMES.length) : (+last + 1) % FRAMES.length; localStorage.setItem('syc_frame_last', pick); sessionStorage.setItem('syc_frame', pick); }
   } catch (e) { pick = Math.floor(Math.random() * FRAMES.length); }
-  var img = $('frame'); img.onload = function () { img.classList.add('on'); }; img.style.filter = FRAMES[pick].f; img.src = FRAMES[pick].src;
+  // the loop plays as a silent video (every phone, Instagram's browser); the animated image stays underneath if a phone won't autoplay
+  var F = FRAMES[pick], img = $('frame'), vid = $('vid');
+  img.style.filter = vid.style.filter = F.f;
+  img.onload = function () { img.classList.add('on'); }; img.src = F.src;
+  vid.src = F.mp4; vid.muted = true;
+  vid.addEventListener('playing', function () { vid.classList.add('on'); setTimeout(function () { img.classList.remove('on'); }, 1700); });
+  var tryPlay = function () { var pr = vid.play(); if (pr && pr.catch) pr.catch(function () {}); };
+  tryPlay(); document.addEventListener('visibilitychange', function () { if (!document.hidden) tryPlay(); });
+  document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
 
   /* the line, letter by letter (after the mark has settled) */
   (function () {
