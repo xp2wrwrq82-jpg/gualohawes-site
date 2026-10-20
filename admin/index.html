@@ -133,6 +133,38 @@
   .seg button.on { background: #fff; color: var(--ink); box-shadow: 0 2px 10px rgba(30,30,40,.08); }
   .set .row { margin-top: 18px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
   .set a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+  /* site + shop editor */
+  .ed { margin-top: 34px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px; }
+  .ed h3 { margin: 22px 0 2px; text-align: center; font-size: 11px; font-weight: 400; letter-spacing: .08em; color: var(--fine); }
+  .sec { padding: 18px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.08), 0 18px 50px rgba(30,30,40,.06); display: flex; flex-direction: column; gap: 10px; }
+  .sec .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .fld { flex: 1 1 200px; min-width: 0; height: 40px; border: 0; outline: 0; border-radius: 12px; padding: 0 14px; background: rgba(255,255,255,.75);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10); font: 400 14px var(--sans); color: var(--ink); }
+  .fld:focus { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.28); }
+  .fld.big { font-size: 15px; }
+  textarea.fld { height: 84px; padding: 10px 14px; resize: vertical; line-height: 1.4; }
+  .ib { height: 32px; min-width: 32px; padding: 0 10px; border: 0; border-radius: 999px; cursor: pointer; background: rgba(255,255,255,.7);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10); font: 400 12px var(--sans); color: var(--grey); }
+  .ib:hover { color: var(--ink); }
+  .ib.warn { color: #b3261e; }
+  .items { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .it { display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 14px; background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.08); }
+  .it .th { position: relative; aspect-ratio: 1 / 1; border-radius: 10px; overflow: hidden; background: #e9e9ec; display: grid; place-items: center; font-size: 11px; color: var(--fine); text-align: center; padding: 6px; }
+  .it .th img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .it .fld { height: 32px; flex: none; font-size: 12px; padding: 0 10px; border-radius: 9px; }
+  .it .row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .it .row .ib { height: 26px; min-width: 26px; padding: 0 8px; font-size: 11px; }
+  .add { align-self: flex-start; }
+  .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--grey); cursor: pointer; }
+  .chk input, .loop input { accent-color: var(--ink); }
+  .savebar { position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 8px; align-items: center;
+    padding: 8px; border-radius: 999px; background: rgba(255,255,255,.86); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 14px 40px rgba(30,30,40,.12); max-width: calc(100% - 32px); flex-wrap: wrap; justify-content: center; }
+  .savebar .msg { font-size: 12px; color: var(--fine); padding: 0 8px; }
+  .savebar .msg.bad { color: #b3261e; }
+  .btn.ink { background: var(--ink); color: #fff; }
+  .btn.ink:disabled { background: rgba(29,29,31,.35); }
   .devs { margin-top: 44px; text-align: center; }
   .devs .lbl { font-size: 11px; letter-spacing: .08em; color: var(--fine); }
   .devs ul { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
@@ -193,6 +225,8 @@
     <button class="tab on" type="button" data-tab="list">the list</button>
     <button class="tab" type="button" data-tab="visits">visits</button>
     <button class="tab" type="button" data-tab="page">beta page</button>
+    <button class="tab" type="button" data-tab="site">site</button>
+    <button class="tab" type="button" data-tab="shop">shop</button>
   </nav>
   <section class="pane" id="pane-list">
   <div class="head">
@@ -234,6 +268,16 @@
       <div class="status" id="cstatus" role="status" aria-live="polite"></div>
     </form>
   </section>
+
+  <section class="pane" id="pane-site" hidden><div class="ed" id="edSite"></div></section>
+  <section class="pane" id="pane-shop" hidden><div class="ed" id="edShop"></div></section>
+  <div class="savebar" id="savebar" hidden>
+    <span class="msg" id="sMsg"></span>
+    <button class="btn ink" id="sSave" type="button" disabled>save</button>
+    <button class="btn" id="sUndo" type="button">undo last save</button>
+    <a class="btn plain" href="/" target="_blank" rel="noopener">view site</a>
+  </div>
+  <input type="file" id="pick" accept="image/jpeg,image/png,image/webp" multiple hidden>
 
   <div class="devs" id="devs">
     <div class="lbl" id="devLbl">face id / touch id</div>
@@ -409,7 +453,9 @@
     TAB = t; try { localStorage.setItem('syc_admin_tab', t); } catch (e) {}
     [].forEach.call(document.querySelectorAll('.tab'), function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === t); });
     $('pane-list').hidden = t !== 'list'; $('pane-visits').hidden = t !== 'visits'; $('pane-page').hidden = t !== 'page';
-    if (t === 'visits') loadStats(); if (t === 'page') loadCfg();
+    $('pane-site').hidden = t !== 'site'; $('pane-shop').hidden = t !== 'shop'; $('savebar').hidden = t !== 'site' && t !== 'shop';
+    $('devs').hidden = t === 'site' || t === 'shop';
+    if (t === 'visits') loadStats(); if (t === 'page') loadCfg(); if (t === 'site' || t === 'shop') loadContent();
   }
   $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) showTab(b.getAttribute('data-tab')); });
 
@@ -460,6 +506,149 @@
     call('/config', { method: 'POST', body: { teaser: { line: $('cLine').value, fine: $('cFine').value, loops: loops, signups: cfgSign } } })
       .then(function () { st.textContent = 'saved — the page shows it within about 20 seconds.'; })
       .catch(function (err) { st.textContent = err.message; st.className = 'status bad'; }).then(function () { b.disabled = false; });
+  });
+
+  /* ── site + shop: the homepage's content (portfolio, clients, plugin text, shop) ── */
+  var model = null, dirty = false, loadingC = null;
+  function loadContent(force) {
+    if (model && !force) { renderEd(); return Promise.resolve(); }
+    if (loadingC) return loadingC;
+    loadingC = call('/content').then(function (j) {
+      if (j.content) return j.content;
+      return fetch('/content.json', { cache: 'no-store' }).then(function (r) { return r.json(); });   // never edited: the page's own copy
+    }).then(function (c) { model = c; setDirty(false); renderEd(); })
+      .catch(function (err) { if (err.message !== 'signed out') smsg(err.message, true); })
+      .then(function () { loadingC = null; });
+    return loadingC;
+  }
+  function smsg(t, bad) { var m = $('sMsg'); m.textContent = t || ''; m.className = 'msg' + (bad ? ' bad' : ''); }
+  function setDirty(d) { dirty = d; $('sSave').disabled = !d; smsg(d ? 'unsaved changes' : ''); }
+  window.addEventListener('beforeunload', function (e) { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+  function at(path) { return path.split('.').reduce(function (o, k) { return o == null ? o : o[/^\d+$/.test(k) ? +k : k]; }, model); }
+  function parentOf(path) { var p = path.split('.'), k = p.pop(); return { obj: at(p.join('.')), key: /^\d+$/.test(k) ? +k : k }; }
+  var A = function (v) { return esc(v == null ? '' : v); };
+  var GLY = ['grid', 'wave', 'drop', 'noise', 'petal'];
+  function fld(path, ph, cls) { return '<input class="fld' + (cls ? ' ' + cls : '') + '" data-f="' + path + '" value="' + A(at(path)) + '" placeholder="' + A(ph) + '" aria-label="' + A(ph) + '">'; }
+  function ctl(path, n) { return '<button class="ib" type="button" data-act="mv" data-p="' + path + '" data-d="-1" aria-label="move back">' + (n ? '↑' : '←') + '</button><button class="ib" type="button" data-act="mv" data-p="' + path + '" data-d="1" aria-label="move on">' + (n ? '↓' : '→') + '</button><button class="ib warn" type="button" data-act="rm" data-p="' + path + '">remove</button>'; }
+  function thumb(src, label) { return '<div class="th">' + (src ? '<img src="' + A(src) + '" alt="" loading="lazy">' : A(label || 'no photo')) + '</div>'; }
+
+  function renderEd() {
+    if (!model) return;
+    // site
+    var h = '<h3>portfolio — sections in the order they show</h3>';
+    model.work.forEach(function (sec, i) {
+      var P = 'work.' + i;
+      h += '<div class="sec"><div class="bar">' + fld(P + '.title', 'section title', 'big') + ctl(P, true) + '</div>' +
+        '<div class="bar">' + fld(P + '.note', 'small note (optional)') +
+        '<label class="chk"><input type="checkbox" data-f="' + P + '.gallery"' + (sec.gallery ? ' checked' : '') + '> photo gallery</label></div><div class="items">';
+      sec.items.forEach(function (it, k) {
+        var Q = P + '.items.' + k;
+        h += '<div class="it">' + thumb(it.src, it.code || it.med) + fld(Q + '.code', 'caption') + fld(Q + '.href', 'link (optional)') +
+          '<div class="row"><button class="ib" type="button" data-act="photo" data-p="' + Q + '">' + (it.src ? 'replace' : 'photo') + '</button>' + ctl(Q) + '</div>' +
+          '<label class="chk"><input type="checkbox" data-f="' + Q + '.video"' + (it.video ? ' checked' : '') + '> video link</label></div>';
+      });
+      h += '</div><button class="ib add" type="button" data-act="addph" data-p="' + P + '">+ add photos</button><button class="ib add" type="button" data-act="additem" data-p="' + P + '">+ add a link tile</button></div>';
+    });
+    h += '<button class="btn add" type="button" data-act="addsec">+ new section</button>';
+    h += '<h3>clients</h3><div class="sec"><div class="items">';
+    model.clients.forEach(function (c, i) {
+      var P = 'clients.' + i;
+      h += '<div class="it">' + thumb(c.logo, c.name) + fld(P + '.name', 'name') + '<div class="row"><button class="ib" type="button" data-act="logo" data-p="' + P + '">' + (c.logo ? 'logo' : '+ logo') + '</button>' + ctl(P) + '</div></div>';
+    });
+    h += '</div><button class="ib add" type="button" data-act="addclient">+ add a client</button></div>';
+    h += '<h3>plugin pages (the SYCSTEM windows)</h3>';
+    Object.keys(model.plugins || {}).forEach(function (k) {
+      h += '<div class="sec"><div class="lbl" style="text-align:left;font-size:11px;letter-spacing:.08em;color:var(--fine)">' + A(k) + '</div>' + fld('plugins.' + k + '.tag', 'one line') +
+        '<textarea class="fld" data-f="plugins.' + k + '.desc" aria-label="description">' + A(model.plugins[k].desc) + '</textarea></div>';
+    });
+    $('edSite').innerHTML = h;
+    // shop
+    var g = '<div class="sec" style="align-items:center"><div class="lbl" style="font-size:11px;letter-spacing:.08em;color:var(--fine)">the shop on gualo.site</div>' +
+      '<div class="seg" id="shopSeg"><button type="button" data-v="on" class="' + (model.shopOn ? 'on' : '') + '">on</button><button type="button" data-v="off" class="' + (model.shopOn ? '' : 'on') + '">off</button></div>' +
+      '<div class="msg" style="font-size:12px;color:var(--fine);text-align:center">' + (model.shopOn ? 'a “Shop” link shows next to Clients.' : 'hidden — nobody can open it.') + '</div></div>';
+    model.shop.forEach(function (sec, i) {
+      var P = 'shop.' + i;
+      g += '<div class="sec"><div class="bar">' + fld(P + '.title', 'shelf title', 'big') + ctl(P, true) + '</div><div class="bar">' + fld(P + '.note', 'small note (optional)') + '</div><div class="items">';
+      sec.items.forEach(function (it, k) {
+        var Q = P + '.items.' + k;
+        g += '<div class="it">' + thumb(it.src, it.name) + fld(Q + '.name', 'name') + fld(Q + '.price', 'price') + fld(Q + '.cta', it.soon ? 'button (Soon)' : 'button (Beta)') + fld(Q + '.href', 'buy link (optional)') +
+          '<label class="chk"><input type="checkbox" data-f="' + Q + '.soon"' + (it.soon ? ' checked' : '') + '> coming soon</label>' +
+          (it.src ? '' : '<select class="fld" data-f="' + Q + '.glyph" aria-label="symbol">' + GLY.map(function (x) { return '<option' + (it.glyph === x ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select>') +
+          '<div class="row"><button class="ib" type="button" data-act="photo" data-p="' + Q + '">' + (it.src ? 'replace' : 'photo') + '</button>' + (it.src ? '<button class="ib" type="button" data-act="nophoto" data-p="' + Q + '">no photo</button>' : '') + ctl(Q) + '</div></div>';
+      });
+      g += '</div><button class="ib add" type="button" data-act="addprod" data-p="' + P + '">+ add a product</button></div>';
+    });
+    g += '<button class="btn add" type="button" data-act="addshelf">+ new shelf</button>';
+    $('edShop').innerHTML = g;
+  }
+
+  function onField(e) {
+    var el = e.target, p = el.getAttribute('data-f'); if (!p || !model) return;
+    var t = parentOf(p);
+    if (el.type === 'checkbox') { if (el.checked) t.obj[t.key] = true; else delete t.obj[t.key]; }
+    else if (el.value === '' && /\.(href|cta|note|med)$/.test(p)) delete t.obj[t.key];
+    else t.obj[t.key] = el.value;
+    setDirty(true);
+    if (el.type === 'checkbox' && /\.soon$/.test(p)) renderEd();
+  }
+  ['edSite', 'edShop'].forEach(function (id) { $(id).addEventListener('input', onField); $(id).addEventListener('change', function (e) { if (e.target.type === 'checkbox' || e.target.tagName === 'SELECT') onField(e); }); });
+
+  // photos: shrink in the browser (≤ 2400 px), upload, then use
+  function shrink(file) {
+    return createImageBitmap(file).then(function (bmp) {
+      var k = Math.min(1, 2400 / Math.max(bmp.width, bmp.height)), w = Math.round(bmp.width * k), h = Math.round(bmp.height * k);
+      var c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+      var type = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      return new Promise(function (res) { c.toBlob(function (b) { res({ blob: b, w: w, h: h, type: type }); }, type, .86); });
+    });
+  }
+  function upload(file) {
+    return shrink(file).then(function (s) {
+      return fetch(API + '/media?w=' + s.w + '&h=' + s.h, { method: 'POST', headers: { 'Content-Type': s.type, Authorization: 'Bearer ' + session.token }, body: s.blob })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error(j.error || 'upload failed'); return j; }); });
+    });
+  }
+  var pickFor = null;
+  $('pick').addEventListener('change', function () {
+    var files = [].slice.call(this.files || []); this.value = ''; if (!files.length || !pickFor) return;
+    var job = pickFor; pickFor = null; smsg('uploading ' + files.length + ' photo' + (files.length > 1 ? 's' : '') + '…');
+    var chain = Promise.resolve();
+    files.forEach(function (f) { chain = chain.then(function () { return upload(f).then(function (u) { job(u); renderEd(); }); }); });
+    chain.then(function () { setDirty(true); smsg('photos in — press save to put them live.'); }).catch(function (err) { smsg(err.message, true); });
+  });
+  var shape = function (u) { return { ar: u.w + '/' + u.h, nw: Math.round(1500 * u.w / Math.max(u.w, u.h)) }; };
+  var armedRm = null;
+  function onAct(e) {
+    var b = e.target.closest('[data-act]'); if (!b || !model) return;
+    var act = b.getAttribute('data-act'), p = b.getAttribute('data-p');
+    if (act === 'mv') { var t = parentOf(p), arr = t.obj, i = t.key, j = i + (+b.getAttribute('data-d')); if (j < 0 || j >= arr.length) return; var x = arr[i]; arr[i] = arr[j]; arr[j] = x; }
+    else if (act === 'rm') { if (armedRm !== b) { if (armedRm) armedRm.textContent = 'remove'; armedRm = b; b.textContent = 'sure?'; return; } var r = parentOf(p); r.obj.splice(r.key, 1); armedRm = null; }
+    else if (act === 'photo' || act === 'logo') {
+      var target = at(p); pickFor = function (u) { if (act === 'logo') target.logo = u.url; else { target.src = u.url; if (!/^shop/.test(p)) { var s2 = shape(u); target.ar = s2.ar; target.nw = s2.nw; } } };
+      $('pick').multiple = false; $('pick').click(); return;
+    }
+    else if (act === 'addph') { var sec = at(p); pickFor = function (u) { var s3 = shape(u); sec.items.push({ ar: s3.ar, nw: s3.nw, src: u.url, code: '' }); }; $('pick').multiple = true; $('pick').click(); return; }
+    else if (act === 'nophoto') { delete at(p).src; }
+    else if (act === 'additem') at(p).items.push({ ar: '16/9', code: 'new link', href: '' });
+    else if (act === 'addsec') model.work.push({ key: 'SECTION_' + Date.now().toString(36).toUpperCase(), title: 'New section', note: '', gallery: true, items: [] });
+    else if (act === 'addclient') model.clients.push({ name: 'New client', logo: '' });
+    else if (act === 'addprod') at(p).items.push({ ar: '4/5', name: 'New product', price: 'Soon', soon: true, glyph: 'petal' });
+    else if (act === 'addshelf') model.shop.push({ key: 'SHELF_' + Date.now().toString(36).toUpperCase(), title: 'New shelf', note: '', store: true, items: [] });
+    setDirty(true); renderEd();
+  }
+  ['edSite', 'edShop'].forEach(function (id) { $(id).addEventListener('click', onAct); });
+  $('edShop').addEventListener('click', function (e) { var b = e.target.closest('#shopSeg button'); if (!b) return; model.shopOn = b.getAttribute('data-v') === 'on'; setDirty(true); renderEd(); });
+  $('sSave').addEventListener('click', function () {
+    var b = this; b.disabled = true; smsg('saving…');
+    call('/content', { method: 'POST', body: { content: model } }).then(function (j) { model = j.content; setDirty(false); renderEd(); smsg('saved — live on gualo.site within about 15 seconds.'); })
+      .catch(function (err) { smsg(err.message, true); b.disabled = false; });
+  });
+  var undoArm = false;
+  $('sUndo').addEventListener('click', function () {
+    var b = this; if (!undoArm) { undoArm = true; b.textContent = 'tap again to undo'; setTimeout(function () { undoArm = false; b.textContent = 'undo last save'; }, 3000); return; }
+    undoArm = false; b.textContent = 'undo last save'; smsg('undoing…');
+    call('/content', { method: 'POST', body: { undo: true } }).then(function () { model = null; return loadContent(true); }).then(function () { smsg('back to the previous save.'); })
+      .catch(function (err) { smsg(err.message, true); });
   });
 
   // keep it current while it's open

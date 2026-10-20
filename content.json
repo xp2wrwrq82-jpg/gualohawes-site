@@ -1,0 +1,543 @@
+{
+ "v": 1,
+ "work": [
+  {
+   "key": "ALBUM",
+   "title": "Internet Money / We All We Needed Album Cover",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "1500/1500",
+     "nw": 1500,
+     "src": "/media/6da04da6e81e9536.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "DMV",
+   "title": "Directed Music Videos",
+   "note": "Lil Tecca",
+   "items": [
+    {
+     "ar": "16/9",
+     "med": "Lil Tecca",
+     "code": "Lil Tecca — Owa Owa",
+     "video": true,
+     "href": "https://www.youtube.com/watch?v=hnbN2L_tkCE"
+    },
+    {
+     "ar": "16/9",
+     "med": "Lil Tecca",
+     "code": "Lil Tecca — Dark Thoughts",
+     "video": true,
+     "href": "https://www.youtube.com/watch?v=Xtq_A2NnHKQ"
+    },
+    {
+     "ar": "16/9",
+     "med": "Lil Tecca",
+     "code": "Lil Tecca — 24HRS",
+     "video": true,
+     "href": "https://www.youtube.com/watch?v=FDoxIQtyPfs"
+    },
+    {
+     "ar": "16/9",
+     "med": "Lil Tecca",
+     "code": "Lil Tecca — Half The Plot",
+     "video": true,
+     "href": "https://www.youtube.com/watch?v=cape_0UD8Y4"
+    }
+   ]
+  },
+  {
+   "key": "LIVE",
+   "title": "Live",
+   "note": "Lil Tecca",
+   "items": [
+    {
+     "ar": "16/9",
+     "med": "Lil Tecca",
+     "code": "On Your Own",
+     "video": true,
+     "href": "https://www.youtube.com/watch?v=s9Pt9hYdrCQ"
+    },
+    {
+     "ar": "16/9",
+     "med": "Lil Tecca",
+     "code": "Ransom",
+     "video": true,
+     "href": "https://www.youtube.com/watch?v=oviAGTO1E4c"
+    }
+   ]
+  },
+  {
+   "key": "PRESS",
+   "title": "Press",
+   "note": "Complex · Our Generation · Rolling Loud · Summer Smash",
+   "items": [
+    {
+     "ar": "3/2",
+     "med": "Complex",
+     "code": "Complex",
+     "href": "https://www.instagram.com/p/C1szGC4Mvad/"
+    },
+    {
+     "ar": "3/2",
+     "med": "Our Generation",
+     "code": "Kanye West",
+     "href": "https://ourgenerationmusic.com/news/kanye-west-performs-at-travis-scott-circus-maximus-orlando/"
+    },
+    {
+     "ar": "4/5",
+     "med": "Portrait",
+     "code": "Kim Kardashian",
+     "href": "https://www.instagram.com/p/C4jfsJhPF2z/"
+    },
+    {
+     "ar": "3/2",
+     "med": "Rolling Loud",
+     "code": "Rolling Loud",
+     "href": "https://www.instagram.com/gualohawes/"
+    },
+    {
+     "ar": "4/5",
+     "med": "Summer Smash",
+     "code": "Summer Smash 2025",
+     "href": "https://www.instagram.com/p/DLNqJ1uyMNg/"
+    },
+    {
+     "ar": "4/5",
+     "med": "Summer Smash",
+     "code": "Summer Smash 2026",
+     "href": "https://www.instagram.com/p/DZqHjUymDSG/"
+    }
+   ]
+  },
+  {
+   "key": "ART_UZI",
+   "title": "Lil Uzi Vert",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "995/1500",
+     "nw": 995,
+     "src": "/media/f7cfcb1336db1847.jpg",
+     "code": ""
+    },
+    {
+     "ar": "995/1500",
+     "nw": 995,
+     "src": "/media/58c71b8395a22f3c.jpg",
+     "code": ""
+    },
+    {
+     "ar": "995/1500",
+     "nw": 995,
+     "src": "/media/d6f5aa686b093519.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_DRAKE",
+   "title": "Drake",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "1013/1500",
+     "nw": 1013,
+     "src": "/media/d032bbb213245fac.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1013/1500",
+     "nw": 1013,
+     "src": "/media/35e17e3c53cebe35.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1013/1500",
+     "nw": 1013,
+     "src": "/media/876df4bd247a02f8.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_JAYDEN",
+   "title": "Jayden Reed",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/50b85838de82aaf2.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/147dc6071a75506e.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/e5ff520503ed0ccc.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/6e83ab073504dcd2.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_SEXYYRED",
+   "title": "Sexyy Red",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/928f15f023dd5c0d.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/4a818ccaaf30cf52.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/1a7390ea4e101e6f.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_YEV1",
+   "title": "Ye / Vultures",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/4c3489fb9aca8d39.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1060/1500",
+     "nw": 1060,
+     "src": "/media/0a143c8aeb63cd53.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_YEV2",
+   "title": "Ye / Vultures 2",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "1205/1500",
+     "nw": 1205,
+     "src": "/media/f855f6bcafca9660.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1200/1500",
+     "nw": 1200,
+     "src": "/media/ce900758db23d74c.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1200/1500",
+     "nw": 1200,
+     "src": "/media/00c9e557ad92ea9d.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_TECCA",
+   "title": "Lil Tecca",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/35aa8d53a7baf20a.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1500/994",
+     "nw": 1500,
+     "src": "/media/d6cb17d4bf7d7d54.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/e6c885622dd10886.jpg",
+     "code": ""
+    },
+    {
+     "ar": "995/1500",
+     "nw": 995,
+     "src": "/media/48c39c16f29a4f16.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/8e4a14c5b13edbc3.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/89a5b9338b73ea57.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_FFAWTY",
+   "title": "Ffawty",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/0b7c92c7b47343f1.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/b0b9010d6d4c31f4.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/f92990c12ba66b88.jpg",
+     "code": ""
+    },
+    {
+     "ar": "1500/994",
+     "nw": 1500,
+     "src": "/media/e562384d5d2dfe47.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "ART_DOPAMINE",
+   "title": "Lil Tecca / Dopamine",
+   "note": "",
+   "gallery": true,
+   "items": [
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/cf84a6c4dde4faf1.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/c6de89954971af18.jpg",
+     "code": ""
+    },
+    {
+     "ar": "994/1500",
+     "nw": 994,
+     "src": "/media/b0be187605027673.jpg",
+     "code": ""
+    }
+   ]
+  },
+  {
+   "key": "PORTRAIT",
+   "title": "Portrait",
+   "note": "Selected",
+   "items": [
+    {
+     "ar": "4/5",
+     "med": "PT",
+     "code": "Portrait 01"
+    },
+    {
+     "ar": "4/5",
+     "med": "PT",
+     "code": "Portrait 02"
+    },
+    {
+     "ar": "4/5",
+     "med": "PT",
+     "code": "Portrait 03"
+    },
+    {
+     "ar": "4/5",
+     "med": "PT",
+     "code": "Portrait 04"
+    },
+    {
+     "ar": "4/5",
+     "med": "PT",
+     "code": "Portrait 05"
+    },
+    {
+     "ar": "4/5",
+     "med": "PT",
+     "code": "Portrait 06"
+    }
+   ]
+  }
+ ],
+ "shop": [
+  {
+   "key": "SYCSTEM",
+   "title": "SYCSTEM",
+   "note": "Premiere plugins",
+   "store": true,
+   "items": [
+    {
+     "ar": "4/5",
+     "name": "FX",
+     "price": "Beta",
+     "glyph": "grid"
+    },
+    {
+     "ar": "4/5",
+     "name": "SYNC",
+     "price": "Beta",
+     "glyph": "wave"
+    },
+    {
+     "ar": "4/5",
+     "name": "GRADE",
+     "price": "Beta",
+     "glyph": "drop"
+    },
+    {
+     "ar": "4/5",
+     "name": "TEXTURE",
+     "price": "Beta",
+     "glyph": "noise"
+    },
+    {
+     "ar": "4/5",
+     "name": "FULL SUITE",
+     "price": "Beta",
+     "glyph": "petal"
+    }
+   ]
+  },
+  {
+   "key": "MERCH",
+   "title": "Merch",
+   "note": "Apparel — coming soon",
+   "store": true,
+   "items": [
+    {
+     "ar": "4/5",
+     "name": "Tee / 01",
+     "price": "Soon",
+     "soon": true,
+     "glyph": "petal"
+    },
+    {
+     "ar": "4/5",
+     "name": "Tee / 02",
+     "price": "Soon",
+     "soon": true,
+     "glyph": "petal"
+    },
+    {
+     "ar": "4/5",
+     "name": "Cap / 01",
+     "price": "Soon",
+     "soon": true,
+     "glyph": "petal"
+    }
+   ]
+  }
+ ],
+ "shopOn": false,
+ "clients": [
+  {
+   "name": "Fortnite",
+   "logo": "/media/a025dd30b158572f.png"
+  },
+  {
+   "name": "Complex",
+   "logo": "/media/12ced8998e3e6f80.png"
+  },
+  {
+   "name": "Rolling Loud",
+   "logo": "/media/55105c716ef798dc.png"
+  },
+  {
+   "name": "Lyrical Lemonade",
+   "logo": "/media/c7c267cea7f56c7b.png"
+  },
+  {
+   "name": "Universal Music",
+   "logo": "/media/97a7a21300e0883d.png"
+  },
+  {
+   "name": "Republic Records",
+   "logo": "/media/0323b9093190a189.png"
+  },
+  {
+   "name": "Mercury Records",
+   "logo": "/media/52147deade394708.png"
+  },
+  {
+   "name": "Internet Money",
+   "logo": "/media/acc8d9e7eac4dbd8.png"
+  },
+  {
+   "name": "Our Generation Music",
+   "logo": "/media/c4fc0d79022a5094.png"
+  }
+ ],
+ "plugins": {
+  "FX": {
+   "tag": "Every look, one panel.",
+   "desc": "Fifty-three native effects — glitch, grain, chromatic, datamosh, bloom and beyond — grouped by feel and rendered in real time on your timeline. Pick a clip, dial the intensity, apply. No presets to hunt, no stacks to chain."
+  },
+  "SYNC": {
+   "tag": "Cut to the beat, automatically.",
+   "desc": "Point Sync at your rushes and every angle locks to the track through Premiere’s own sync engine. Multicam music videos assembled in minutes — on the downbeat, every time."
+  },
+  "GRADE": {
+   "tag": "Reference in, grade out.",
+   "desc": "Fourteen camera profiles and a Lab-space colour engine turn any footage into a finished look. Drop a reference frame, pull a LUT, match the whole timeline — cinema colour without the guesswork."
+  },
+  "TEXTURE": {
+   "tag": "Analog soul on digital footage.",
+   "desc": "Real-time grain, halation, dust and gate-weave layered straight onto your clips. The organic texture of film, controllable frame by frame, with none of the cleanup."
+  },
+  "FILMSTUDIO": {
+   "tag": "Turn digital into celluloid.",
+   "desc": "Emulated film stocks, fades and print looks built for narrative work. Choose a stock, set the fade, and your footage carries the depth and falloff of real film."
+  }
+ }
+}
