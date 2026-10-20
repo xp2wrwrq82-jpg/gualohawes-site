@@ -4,21 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SYCSTEM</title>
-<meta name="description" content="Tools for video editors. Private beta, by invitation.">
+<meta name="description" content="Private beta soon. By invitation.">
 <meta name="theme-color" content="#f5f5f6">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SYCSTEM">
-<meta property="og:description" content="Tools for video editors. Private beta, by invitation.">
+<meta property="og:description" content="Private beta soon. By invitation.">
 <meta property="og:url" content="https://gualo.site/sycstem/">
 <meta property="og:image" content="https://gualo.site/sycstem/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SYCSTEM">
-<meta name="twitter:description" content="Tools for video editors. Private beta, by invitation.">
+<meta name="twitter:description" content="Private beta soon. By invitation.">
 <meta name="twitter:image" content="https://gualo.site/sycstem/og.png">
 <link rel="icon" href="/sycstem/mark.svg" type="image/svg+xml">
-<link rel="preload" as="image" href="/sycstem/bg/1.webp">
 <style>
   :root {
     --ink: #1d1d1f; --grey: #6e6e73; --soft: #a1a1a6;
@@ -31,15 +30,10 @@
   body { background: #f5f5f6; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
   ::selection { background: #1d1d1f; color: #fff; }
 
-  /* the footage behind the glass: full bleed, rotating, softly out of focus, washed in white.
-     The focus breathes — never quite sharp — and each frame drifts a little while it's on. */
+  /* one frame of footage behind the glass per visit (the next visit shows the next one): still, softly out of focus, washed in white */
   .reel { position: fixed; inset: -6%; z-index: 0; pointer-events: none; }
-  .reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0;
-    transition: opacity 2.4s var(--ease); will-change: opacity, transform; animation: focus 9s ease-in-out infinite alternate; }
+  .reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: blur(5px) saturate(.9); transition: opacity 1.6s var(--ease); }
   .reel img.on { opacity: 1; }
-  .reel img.drift { animation: focus 9s ease-in-out infinite alternate, drift 14s linear forwards; }
-  @keyframes focus { from { filter: blur(3px) saturate(.95); } to { filter: blur(7px) saturate(.8); } }
-  @keyframes drift { from { transform: scale(1.02) translate3d(0, 0, 0); } to { transform: scale(1.09) translate3d(-1.2%, -0.8%, 0); } }
   .veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: radial-gradient(120% 90% at 50% 46%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.82) 55%, rgba(250,250,251,.85) 100%); }
 
@@ -79,17 +73,14 @@
 </style>
 </head>
 <body>
-<div class="reel" id="reel" aria-hidden="true">
-  <img src="/sycstem/bg/1.webp" alt="" class="on drift">
-  <img src="/sycstem/bg/2.webp" alt="">
-</div>
+<div class="reel" id="reel" aria-hidden="true"><img id="frame" alt=""></div>
 <div class="veil"></div>
 
 <main>
   <div class="stage">
     <svg class="mark" viewBox="0 0 1000 991.86" fill="currentColor" role="img" aria-label="SYCSTEM"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
-    <p class="what">Tools for video editors.</p>
-    <p class="when">Private beta, opening soon. By invitation.</p>
+    <p class="what">Private beta soon.</p>
+    <p class="when">By invitation.</p>
 
     <form id="f" novalidate>
       <div class="field-in">
@@ -120,13 +111,14 @@
   var q = new URLSearchParams(location.search), source = (q.get('ref') || q.get('utm_source') || (/instagram/i.test(navigator.userAgent) ? 'ig' : '') || 'direct').slice(0, 40);
   var email = '';
 
-  /* the reel: one frame at a time, crossfading every 7 s, each drifting while it's on */
-  var frames = Array.prototype.slice.call(document.querySelectorAll('#reel img')), cur = 0;
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && frames.length > 1) setInterval(function () {
-    var a = frames[cur], b = frames[cur = (cur + 1) % frames.length];
-    b.classList.remove('drift'); void b.offsetWidth; b.classList.add('on', 'drift');
-    a.classList.remove('on');
-  }, 7000);
+  /* the frame for this visit: the same one for the whole session, the next one on the next visit */
+  var FRAMES = ['/sycstem/bg/1.webp', '/sycstem/bg/2.webp'], pick = 0;
+  try {
+    var ss = sessionStorage.getItem('syc_frame');
+    if (ss !== null) pick = +ss % FRAMES.length;
+    else { var last = localStorage.getItem('syc_frame_last'); pick = last === null ? Math.floor(Math.random() * FRAMES.length) : (+last + 1) % FRAMES.length; localStorage.setItem('syc_frame_last', pick); sessionStorage.setItem('syc_frame', pick); }
+  } catch (e) { pick = Math.floor(Math.random() * FRAMES.length); }
+  var img = $('frame'); img.onload = function () { img.classList.add('on'); }; img.src = FRAMES[pick];
 
   function post(body) {
     return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
