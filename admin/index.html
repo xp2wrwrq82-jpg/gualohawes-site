@@ -49,6 +49,9 @@
   .arrow svg { width: 15px; height: 15px; }
   .pill:focus-within .arrow, .arrow:hover { color: var(--ink); background: rgba(0,0,0,.04); }
   .arrow:disabled { opacity: .4; cursor: default; }
+  .go { width: 100%; justify-content: center; border: 0; cursor: pointer; font: 400 15px var(--sans); letter-spacing: .01em; color: var(--ink); gap: 10px; }
+  .go:disabled { opacity: .55; cursor: default; }
+  .go svg { width: 15px; height: 15px; color: var(--grey); }
   .note { margin-top: 16px; min-height: 16px; font-size: 12px; color: var(--grey); }
   .note.bad { color: #b3261e; }
   .quiet { margin-top: 18px; border: 0; background: none; font: 400 12px var(--sans); letter-spacing: .04em; color: var(--fine); cursor: pointer; }
@@ -72,6 +75,7 @@
   .btn:disabled { opacity: .5; cursor: default; }
   .btn.plain { background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--fine); padding: 0 6px; height: auto; font-size: 12px; letter-spacing: .04em; }
   .btn.plain:hover { color: var(--ink); }
+  #status:empty { display: none; }
   .status { margin-top: 14px; min-height: 16px; text-align: center; font-size: 12px; color: var(--fine); }
   .status.bad { color: #b3261e; }
 
@@ -88,6 +92,13 @@
   .row .meta a:hover, .row .em a:hover { color: var(--ink); }
   .row.new .no { color: var(--ink); }
   .row.new .no::after { content: "new"; display: block; margin-top: 3px; font-size: 11px; color: var(--fine); }
+  .devs { margin-top: 44px; text-align: center; }
+  .devs .lbl { font-size: 11px; letter-spacing: .08em; color: var(--fine); }
+  .devs ul { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .devs li { font-size: 13px; color: var(--line); }
+  .devs li .when { color: var(--fine); }
+  .devs li button { margin-left: 8px; }
+  .devs .btn { margin-top: 16px; }
   .empty { padding: 44px 22px; text-align: center; font-size: 14px; letter-spacing: .06em; color: var(--line); }
   @media (max-width: 520px) {
     .row { grid-template-columns: 52px minmax(0, 1fr); padding: 14px 18px; }
@@ -109,30 +120,23 @@
     <svg class="mark" viewBox="0 0 1000 991.86" fill="currentColor" aria-hidden="true"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
     <p class="line" id="gline">the list.</p>
 
-    <form id="fLogin" novalidate>
-      <div class="pill"><input type="email" id="lEmail" placeholder="Email" autocomplete="username" inputmode="email" aria-label="Email" required></div>
+    <form id="fSign" novalidate>
+      <button class="pill go" id="sGo" type="submit"><span id="sLbl">sign in</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+    </form>
+
+    <form id="fLink" novalidate hidden>
       <div class="pill">
-        <input type="password" id="lPass" placeholder="Password" autocomplete="current-password" aria-label="Password" required>
-        <button class="arrow" id="lGo" type="submit" aria-label="Sign in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+        <input type="email" id="kEmail" placeholder="Email" autocomplete="username" inputmode="email" aria-label="Email" required>
+        <button class="arrow" id="kGo" type="submit" aria-label="Email me a link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
       </div>
     </form>
 
-    <form id="fForgot" novalidate hidden>
-      <div class="pill">
-        <input type="email" id="fEmail" placeholder="Email" autocomplete="username" inputmode="email" aria-label="Email" required>
-        <button class="arrow" id="fGo" type="submit" aria-label="Send link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
-      </div>
-    </form>
-
-    <form id="fReset" novalidate hidden>
-      <div class="pill">
-        <input type="password" id="rPass" placeholder="New password" autocomplete="new-password" aria-label="New password" minlength="8" required>
-        <button class="arrow" id="rGo" type="submit" aria-label="Save"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
-      </div>
+    <form id="fSetup" novalidate hidden>
+      <button class="pill go" id="uGo" type="submit"><span id="uLbl">use face id</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
     </form>
 
     <p class="note" id="gnote" role="status" aria-live="polite"></p>
-    <button class="quiet" id="toForgot" type="button">forgot?</button>
+    <button class="quiet" id="toLink" type="button">new device? email me a link</button>
     <button class="quiet" id="toLogin" type="button" hidden>back</button>
   </div>
 </main>
@@ -151,9 +155,15 @@
       <button class="btn" id="csv" type="button">download csv</button>
       <button class="btn" id="test" type="button">send test alert</button>
     </div>
+    <div class="status" id="alerts"></div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
   </div>
   <div class="list" id="list"></div>
+  <div class="devs" id="devs">
+    <div class="lbl" id="devLbl">face id / touch id</div>
+    <ul id="devList"></ul>
+    <button class="btn" id="addDev" type="button">add this device</button>
+  </div>
 </main>
 
 <p class="fine" id="fine">Technology by Gualo Hawes</p>
@@ -178,7 +188,7 @@
     if (session && session.token) h.Authorization = 'Bearer ' + session.token;
     return fetch(API + path, { method: opts.method || 'GET', headers: h, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: 'no-store' })
       .then(function (r) {
-        if (r.status === 401 && path !== '/login' && path !== '/reset') { signOut('signed out — sign in again.'); throw new Error('signed out'); }
+        if (r.status === 401 && session && !/^\/(login|reset|passkey)/.test(path)) { signOut('signed out — sign in again.'); throw new Error('signed out'); }
         if (opts.raw) { if (!r.ok) throw new Error('Something went wrong.'); return r; }
         return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw new Error(j.error || 'Something went wrong.'); return j; });
       });
@@ -186,40 +196,76 @@
   function note(t, bad) { var n = $('gnote'); n.textContent = t || ''; n.className = 'note' + (bad ? ' bad' : ''); }
   function status(t, bad) { var s = $('status'); s.textContent = t || ''; s.className = 'status' + (bad ? ' bad' : ''); }
 
+  /* ── passkeys: Touch ID on the Mac, Face ID on the iPhone (WebAuthn) ── */
+  var PK = (function () {
+    function b2u(buf) { var s = '', a = new Uint8Array(buf); for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function u2b(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a.buffer; }
+    function ids(list) { return (list || []).map(function (c) { var o = { type: c.type, id: u2b(c.id) }; if (c.transports) o.transports = c.transports; return o; }); }
+    return {
+      supported: function () { return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create); },
+      create: function (o) {
+        var pk = Object.assign({}, o, { challenge: u2b(o.challenge), user: Object.assign({}, o.user, { id: u2b(o.user.id) }), excludeCredentials: ids(o.excludeCredentials) });
+        return navigator.credentials.create({ publicKey: pk }).then(function (c) {
+          return { id: c.id, rawId: b2u(c.rawId), type: c.type, response: { clientDataJSON: b2u(c.response.clientDataJSON), attestationObject: b2u(c.response.attestationObject), transports: c.response.getTransports ? c.response.getTransports() : [] } };
+        });
+      },
+      get: function (o) {
+        var pk = Object.assign({}, o, { challenge: u2b(o.challenge), allowCredentials: ids(o.allowCredentials) });
+        return navigator.credentials.get({ publicKey: pk }).then(function (c) {
+          return { id: c.id, rawId: b2u(c.rawId), type: c.type, response: { clientDataJSON: b2u(c.response.clientDataJSON), authenticatorData: b2u(c.response.authenticatorData), signature: b2u(c.response.signature), userHandle: c.response.userHandle ? b2u(c.response.userHandle) : null } };
+        });
+      }
+    };
+  })();
+  var ua = navigator.userAgent, isPhone = /iPhone|iPad|Android/.test(ua), isMac = /Macintosh|Mac OS X/.test(ua) && !isPhone;
+  var BIO = /iPhone|iPad/.test(ua) ? 'face id' : isMac ? 'touch id' : 'a passkey';
+  $('sLbl').textContent = 'sign in with ' + BIO; $('uLbl').textContent = 'use ' + BIO;
+  function deviceError(err, kind) {
+    var n = err && err.name;
+    if ((n === 'NotAllowedError' || n === 'AbortError') && kind === 'login') return 'didn’t go through. first time on this device? email yourself a link below.';
+    if (n === 'NotAllowedError' || n === 'AbortError') return 'cancelled — tap to try again.';
+    if (n === 'InvalidStateError') return 'this device is already set up — just sign in.';
+    if (n === 'SecurityError') return 'open this page at gualo.site/admin.';
+    return (err && err.message) || 'something went wrong.';
+  }
+  // one ceremony: ask for options, let the device sign, send it back
+  function ceremony(kind, extra) {
+    if (!PK.supported()) return Promise.reject(new Error('this browser can’t do ' + BIO + ' — open gualo.site/admin in safari or chrome.'));
+    return call('/passkey/options', { method: 'POST', body: Object.assign({ kind: kind }, extra) }).then(function (o) {
+      return (kind === 'login' ? PK.get(o.options) : PK.create(o.options)).then(function (cred) {
+        return call('/passkey/verify', { method: 'POST', body: Object.assign({ kind: kind, state: o.state, credential: cred }, extra) });
+      });
+    });
+  }
+
   /* ── gate ── */
+  var setupToken = null;
   function gate(mode) {
     $('room').hidden = true; $('gate').hidden = false; $('fine').hidden = false;
-    $('fLogin').hidden = mode !== 'login'; $('fForgot').hidden = mode !== 'forgot'; $('fReset').hidden = mode !== 'reset';
-    $('toForgot').hidden = mode !== 'login'; $('toLogin').hidden = mode === 'login';
-    $('gline').textContent = mode === 'forgot' ? 'we’ll email you a link.' : mode === 'reset' ? 'set a new password.' : 'the list.';
-    var f = mode === 'forgot' ? $('fEmail') : mode === 'reset' ? $('rPass') : ($('lEmail').value ? $('lPass') : $('lEmail'));
-    setTimeout(function () { try { f.focus({ preventScroll: true }); } catch (e) {} }, 60);
+    $('fSign').hidden = mode !== 'login'; $('fLink').hidden = mode !== 'link'; $('fSetup').hidden = mode !== 'setup';
+    $('toLink').hidden = mode !== 'login'; $('toLogin').hidden = mode === 'login';
+    $('gline').textContent = mode === 'link' ? 'we’ll email you a link.' : mode === 'setup' ? 'set up this device.' : 'the list.';
+    if (mode === 'link') setTimeout(function () { try { $('kEmail').focus({ preventScroll: true }); } catch (e) {} }, 60);
   }
   function signIn(j) { session = { token: j.token, email: j.email }; try { localStorage.setItem(KEY, JSON.stringify(session)); } catch (e) {} room(); }
   function signOut(msg) { session = null; try { localStorage.removeItem(KEY); } catch (e) {} gate('login'); note(msg || ''); }
 
-  $('fLogin').addEventListener('submit', function (e) {
-    e.preventDefault(); var em = $('lEmail').value.trim(), pw = $('lPass').value;
-    if (!em || !pw) { note('email and password.', true); return; }
-    $('lGo').disabled = true; note('');
-    call('/login', { method: 'POST', body: { email: em, password: pw } }).then(function (j) { $('lPass').value = ''; signIn(j); })
-      .catch(function (err) { note(err.message, true); }).then(function () { $('lGo').disabled = false; });
+  $('fSign').addEventListener('submit', function (e) {
+    e.preventDefault(); $('sGo').disabled = true; note('');
+    ceremony('login', {}).then(signIn).catch(function (err) { note(deviceError(err, 'login'), true); }).then(function () { $('sGo').disabled = false; });
   });
-  $('fForgot').addEventListener('submit', function (e) {
-    e.preventDefault(); var em = $('fEmail').value.trim(); if (!em) return;
-    $('fGo').disabled = true; note('');
-    call('/reset', { method: 'POST', body: { email: em } }).then(function () { note('if that’s the admin email, a link is in its inbox.'); })
-      .catch(function (err) { note(err.message, true); }).then(function () { $('fGo').disabled = false; });
+  $('fLink').addEventListener('submit', function (e) {
+    e.preventDefault(); var em = $('kEmail').value.trim(); if (!em) return;
+    $('kGo').disabled = true; note('');
+    call('/reset', { method: 'POST', body: { email: em } }).then(function () { note('if that’s the admin email, a link is in its inbox. open it on this device.'); })
+      .catch(function (err) { note(err.message, true); }).then(function () { $('kGo').disabled = false; });
   });
-  var resetToken = null;
-  $('fReset').addEventListener('submit', function (e) {
-    e.preventDefault(); var pw = $('rPass').value;
-    if (pw.length < 8) { note('use at least 8 characters.', true); return; }
-    $('rGo').disabled = true; note('');
-    call('/reset', { method: 'POST', body: { token: resetToken, password: pw } }).then(function (j) { $('rPass').value = ''; history.replaceState(null, '', location.pathname); signIn(j); })
-      .catch(function (err) { note(err.message, true); }).then(function () { $('rGo').disabled = false; });
+  $('fSetup').addEventListener('submit', function (e) {
+    e.preventDefault(); $('uGo').disabled = true; note('');
+    ceremony('register', { setup: setupToken }).then(function (j) { history.replaceState(null, '', location.pathname); signIn(j); status('this ' + (isMac ? 'mac' : isPhone ? 'phone' : 'device') + ' is set up — next time, just ' + BIO + '.'); })
+      .catch(function (err) { note(deviceError(err), true); }).then(function () { $('uGo').disabled = false; });
   });
-  $('toForgot').addEventListener('click', function () { $('fEmail').value = $('lEmail').value; note(''); gate('forgot'); });
+  $('toLink').addEventListener('click', function () { note(''); gate('link'); });
   $('toLogin').addEventListener('click', function () { note(''); history.replaceState(null, '', location.pathname); gate('login'); });
 
   /* ── the list ── */
@@ -236,7 +282,7 @@
     return call('/list').then(function (j) {
       var seen = 0; try { seen = +localStorage.getItem(SEEN) || 0; } catch (e) {}
       $('count').textContent = j.total;
-      status(j.alerts.on ? 'email alerts on → ' + (j.alerts.to || '') : 'email alerts off — the key isn’t set on Vercel yet.', !j.alerts.on);
+      var al = $('alerts'); al.textContent = j.alerts.on ? 'email alerts on → ' + (j.alerts.to || '') : 'email alerts off — the key isn’t set on Vercel yet.'; al.className = 'status' + (j.alerts.on ? '' : ' bad');
       $('list').innerHTML = j.rows.length ? j.rows.map(function (r) {
         var meta = [];
         if (r.handle) meta.push('<a href="https://instagram.com/' + encodeURIComponent(r.handle) + '" target="_blank" rel="noreferrer">@' + esc(r.handle) + '</a>');
@@ -246,9 +292,28 @@
           '<span class="meta">' + meta.join(' · ') + '</span></div>';
       }).join('') : '<div class="empty">no one yet. post the link.</div>';
       try { localStorage.setItem(SEEN, String(j.total)); } catch (e) {}
+      var devs = j.devices || [];
+      $('devLbl').textContent = devs.length ? BIO === 'a passkey' ? 'passkeys' : 'face id / touch id' : 'no face id / touch id yet';
+      $('devList').innerHTML = devs.map(function (d) {
+        return '<li>' + esc(d.name) + ' <span class="when">· ' + (d.used ? 'used ' + when(d.used).split(' · ')[0] : 'added ' + when(d.added).split(' · ')[0]) + '</span>' +
+          '<button class="btn plain" type="button" data-rm="' + esc(d.id) + '" data-name="' + esc(d.name) + '">remove</button></li>';
+      }).join('');
     }).catch(function (err) { if (err.message !== 'signed out') status(err.message, true); });
   }
   $('out').addEventListener('click', function () { signOut(''); });
+  $('addDev').addEventListener('click', function () {
+    var b = this; b.disabled = true; status('');
+    ceremony('register', {}).then(function () { status('added — next time, just ' + BIO + '.'); load(); })
+      .catch(function (err) { status(deviceError(err), true); }).then(function () { b.disabled = false; });
+  });
+  var armed = null;
+  $('devList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-rm]'); if (!b) return;
+    if (armed !== b) { if (armed) armed.textContent = 'remove'; armed = b; b.textContent = 'tap again to remove'; return; }
+    b.disabled = true;
+    call('/passkey/remove', { method: 'POST', body: { id: b.getAttribute('data-rm') } }).then(function () { status(b.getAttribute('data-name') + ' removed.'); armed = null; load(); })
+      .catch(function (err) { status(err.message, true); b.disabled = false; });
+  });
   $('test').addEventListener('click', function () {
     var b = this; b.disabled = true; status('sending…');
     call('/test-alert', { method: 'POST' }).then(function (j) { status('sent to ' + j.to + ' — check your inbox (and promotions / spam the first time).'); })
@@ -267,10 +332,15 @@
   document.addEventListener('visibilitychange', function () { if (!document.hidden && session) { load(); play(); } });
 
   /* start: a reset link, a saved session, or the sign-in */
-  var m = location.hash.match(/^#reset=([\w.-]+)$/);
-  if (m) { resetToken = m[1]; gate('reset'); }
-  else if (session && session.token) room();
-  else gate('login');
+  function start() {
+    var m = location.hash.match(/^#(?:setup|reset)=([\w.-]+)$/);
+    note('');
+    if (m) { setupToken = m[1]; gate('setup'); }
+    else if (session && session.token) room();
+    else gate('login');
+  }
+  start();
+  window.addEventListener('hashchange', start); // the setup link opened in a tab that already had the page
 })();
 </script>
 </body>
