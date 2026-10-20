@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SYCSTEM</title>
-<meta name="description" content="Private beta soon. By invitation.">
+<meta name="description" content="private beta soon. by invitation.">
 <meta name="theme-color" content="#f5f5f6">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SYCSTEM">
-<meta property="og:description" content="Private beta soon. By invitation.">
+<meta property="og:description" content="private beta soon. by invitation.">
 <meta property="og:url" content="https://gualo.site/sycstem/">
 <meta property="og:image" content="https://gualo.site/sycstem/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SYCSTEM">
-<meta name="twitter:description" content="Private beta soon. By invitation.">
+<meta name="twitter:description" content="private beta soon. by invitation.">
 <meta name="twitter:image" content="https://gualo.site/sycstem/og.png">
 <link rel="icon" href="/sycstem/mark.svg" type="image/svg+xml">
 <style>
@@ -40,36 +40,38 @@
   main { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; text-align: center; }
   .stage { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; }
   .mark { width: 14px; height: 14px; color: var(--soft); opacity: 0; animation: appear 1.4s var(--ease) .5s forwards; }
-  .what { margin-top: 26px; font-size: 17px; letter-spacing: -.015em; line-height: 1.4; color: var(--ink); opacity: 0; animation: appear 1.6s var(--ease) .9s forwards; }
-  .when { margin-top: 6px; font-size: 13px; letter-spacing: -.005em; color: var(--grey); opacity: 0; animation: appear 1.6s var(--ease) 1.3s forwards; }
+  /* one line, lowercase, surfacing letter by letter out of the blur */
+  .line { margin-top: 28px; font-size: 14px; letter-spacing: .06em; color: #4a4a4f; white-space: nowrap; }
+  .line span { display: inline-block; opacity: 0; filter: blur(6px); animation: letter 1.4s var(--ease) forwards; }
+  .line span.sp { width: .32em; }
+  @keyframes letter { to { opacity: 1; filter: none; } }
 
-  form { width: 100%; margin-top: 30px; opacity: 0; animation: appear 1.4s var(--ease) 1.8s forwards; }
-  .field-in { position: relative; display: flex; align-items: center; height: 52px; border-radius: 999px;
-    background: rgba(255,255,255,.82); backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2);
-    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 10px 30px rgba(30,30,40,.06); transition: box-shadow .3s var(--ease); }
-  .field-in:focus-within { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.24), 0 12px 36px rgba(30,30,40,.09); }
-  .field-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; padding: 0 0 0 22px;
-    font: 400 16px var(--sans); letter-spacing: -.01em; color: var(--ink); }
-  .field-in input::placeholder { color: var(--soft); }
-  .arrow { flex: 0 0 auto; width: 36px; height: 36px; margin-right: 8px; border: 0; border-radius: 50%; cursor: pointer;
-    background: transparent; color: var(--grey); display: grid; place-items: center; transition: color .25s var(--ease), background .25s var(--ease), opacity .25s; }
-  .arrow svg { width: 15px; height: 15px; }
-  .field-in:focus-within .arrow, .arrow:hover { color: var(--ink); background: rgba(0,0,0,.04); }
-  .arrow:disabled { opacity: .4; cursor: default; }
+  form { width: 100%; max-width: 300px; margin-top: 34px; opacity: 0; animation: appear 1.6s var(--ease) 2.6s forwards; }
+  .field-in { position: relative; display: flex; align-items: center; height: 46px; border-bottom: 1px solid rgba(29,29,31,.22); transition: border-color .4s var(--ease); }
+  .field-in:focus-within { border-color: rgba(29,29,31,.55); }
+  .field-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; padding: 0 30px; text-align: center;
+    font: 400 16px var(--sans); letter-spacing: .02em; color: var(--ink); }
+  .field-in input::placeholder { color: #9a9aa0; letter-spacing: .06em; }
+  .arrow { position: absolute; right: 0; top: 50%; width: 30px; height: 30px; margin-top: -15px; border: 0; background: transparent; cursor: pointer;
+    color: var(--ink); display: grid; place-items: center; opacity: 0; transform: translateX(-4px); pointer-events: none; transition: opacity .35s var(--ease), transform .35s var(--ease); }
+  .arrow svg { width: 14px; height: 14px; }
+  .field-in.ready .arrow { opacity: .8; transform: none; pointer-events: auto; }
+  .arrow:hover { opacity: 1; }
+  .arrow:disabled { opacity: .3; cursor: default; }
   .note { margin-top: 14px; min-height: 15px; font-size: 12px; color: var(--grey); }
   .note.bad { color: #b3261e; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
   .after { display: none; flex-direction: column; align-items: center; margin-top: 30px; }
-  .after .t { font-size: 15px; letter-spacing: -.01em; color: var(--ink); }
+  .after .t { font-size: 14px; letter-spacing: .06em; color: #4a4a4f; }
   .after .n { margin-top: 6px; font-size: 12px; color: var(--grey); font-variant-numeric: tabular-nums; letter-spacing: .04em; min-height: 14px; }
-  .after .ig { margin-top: 24px; width: 100%; }
+  .after .ig { margin-top: 26px; width: 100%; max-width: 300px; }
   .after .ig.sent { display: none; }
   body.in form, body.in .note { display: none; }
   body.in .after { display: flex; animation: appear 1.2s var(--ease) forwards; }
 
   @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .mark, .what, .when, form { opacity: 1; } .reel img { transition: none; filter: blur(8px); } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .mark, form, .line span { opacity: 1; filter: none; } .reel img { transition: none; filter: blur(8px); } }
 </style>
 </head>
 <body>
@@ -79,12 +81,11 @@
 <main>
   <div class="stage">
     <svg class="mark" viewBox="0 0 1000 991.86" fill="currentColor" role="img" aria-label="SYCSTEM"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
-    <p class="what">Private beta soon.</p>
-    <p class="when">By invitation.</p>
+    <p class="line" id="line" aria-label="private beta soon. by invitation.">private beta soon. by invitation.</p>
 
     <form id="f" novalidate>
       <div class="field-in">
-        <input type="email" id="email" placeholder="Email" autocomplete="email" inputmode="email" aria-label="Email" required>
+        <input type="email" id="email" placeholder="email" autocomplete="email" inputmode="email" aria-label="Email" required>
         <button class="arrow" id="go" type="submit" aria-label="Request access"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
       </div>
       <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -92,11 +93,11 @@
     <p class="note" id="note" role="status" aria-live="polite"></p>
 
     <div class="after" id="after">
-      <div class="t" id="t">You're on the list.</div>
+      <div class="t" id="t">you're on the list.</div>
       <div class="n" id="n"></div>
       <div class="ig" id="ig">
         <div class="field-in">
-          <input type="text" id="handle" placeholder="Instagram, optional" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Instagram">
+          <input type="text" id="handle" placeholder="instagram (optional)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Instagram">
           <button class="arrow" id="save" type="button" aria-label="Save"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
         </div>
       </div>
@@ -120,11 +121,21 @@
   } catch (e) { pick = Math.floor(Math.random() * FRAMES.length); }
   var img = $('frame'); img.onload = function () { img.classList.add('on'); }; img.src = FRAMES[pick];
 
+  /* the line, letter by letter (after the mark has settled) */
+  (function () {
+    var el = $('line'), txt = el.textContent, html = '', d = 1.1;
+    for (var i = 0; i < txt.length; i++) { var ch = txt[i]; html += ch === ' ' ? '<span class="sp" aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">&nbsp;</span>' : '<span aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">' + ch + '</span>'; d += ch === '.' ? 0.32 : 0.045; }
+    el.innerHTML = html;
+  })();
+  function readyState(input) { var w = input.closest('.field-in'); w.classList.toggle('ready', input.value.trim().length > 2); }
+  $('email').addEventListener('input', function () { readyState(this); });
+  $('handle').addEventListener('input', function () { readyState(this); });
+
   function post(body) {
     return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error(j && j.error || 'Something went wrong.'); return j; }); });
   }
-  function placeText(n) { return n ? 'No. ' + String(n).padStart(3, '0') : ''; }
+  function placeText(n) { return n ? 'no. ' + String(n).padStart(3, '0') : ''; }
   try { var saved = JSON.parse(localStorage.getItem('syc_beta') || 'null'); if (saved && saved.email) { email = saved.email; $('n').textContent = placeText(saved.n); $('ig').classList.add('sent'); document.body.classList.add('in'); } } catch (e) {}
 
   $('f').addEventListener('submit', function (e) {
