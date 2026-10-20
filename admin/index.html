@@ -92,6 +92,47 @@
   .row .meta a:hover, .row .em a:hover { color: var(--ink); }
   .row.new .no { color: var(--ink); }
   .row.new .no::after { content: "new"; display: block; margin-top: 3px; font-size: 11px; color: var(--fine); }
+  .tabs { margin-top: 30px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+  .tab { height: 34px; padding: 0 16px; border: 0; border-radius: 999px; cursor: pointer; background: transparent; font: 400 13px var(--sans); letter-spacing: .02em; color: var(--fine); transition: color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease); }
+  .tab:hover { color: var(--ink); }
+  .tab.on { color: var(--ink); background: var(--glass); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 8px 24px rgba(30,30,40,.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .pane[hidden] { display: none !important; }
+  /* visits */
+  .nums { margin-top: 26px; display: flex; justify-content: center; gap: 34px; flex-wrap: wrap; text-align: center; }
+  .nums b { display: block; font-size: 22px; font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .nums span { font-size: 12px; letter-spacing: .04em; color: var(--fine); }
+  .chart { margin-top: 36px; padding: 22px 22px 14px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.08), 0 18px 50px rgba(30,30,40,.06); }
+  .bars { height: 120px; display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 4px; align-items: end; }
+  .bar { position: relative; border-radius: 3px 3px 1px 1px; background: rgba(29,29,31,.16); min-height: 2px; }
+  .bar i { position: absolute; left: 0; right: 0; bottom: 0; border-radius: inherit; background: rgba(29,29,31,.42); }
+  .bar.today { background: rgba(29,29,31,.26); }
+  .axis { margin-top: 10px; display: flex; justify-content: space-between; font-size: 11px; color: var(--fine); font-variant-numeric: tabular-nums; }
+  .key { margin-top: 10px; text-align: center; font-size: 11px; color: var(--fine); letter-spacing: .03em; }
+  .key em { font-style: normal; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 5px -1px 12px; background: rgba(29,29,31,.42); }
+  .key em.lt { background: rgba(29,29,31,.16); }
+  .srcs { margin-top: 18px; padding: 8px 22px; border-radius: 20px; background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.08), 0 18px 50px rgba(30,30,40,.06); }
+  .src { display: grid; grid-template-columns: 110px minmax(0, 1fr) 44px; gap: 14px; align-items: center; padding: 10px 0; font-size: 13px; color: var(--line); }
+  .src + .src { box-shadow: inset 0 .5px 0 rgba(0,0,0,.08); }
+  .src .track { height: 6px; border-radius: 3px; background: rgba(29,29,31,.08); overflow: hidden; }
+  .src .track i { display: block; height: 100%; border-radius: 3px; background: rgba(29,29,31,.38); }
+  .src b { font-weight: 400; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+  /* beta page settings */
+  .set { margin: 36px auto 0; max-width: 520px; display: flex; flex-direction: column; gap: 12px; }
+  .set .lbl { margin-top: 14px; font-size: 11px; letter-spacing: .08em; color: var(--fine); text-align: center; }
+  .loops { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .loop { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; cursor: pointer; background: #f5f5f6;
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 10px 30px rgba(30,30,40,.06); transition: opacity .3s var(--ease), box-shadow .3s var(--ease); }
+  .loop video { position: absolute; inset: -6%; width: 112%; height: 112%; object-fit: cover; }
+  .loop::after { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.84); }
+  .loop span { position: absolute; z-index: 1; left: 0; right: 0; bottom: 12px; text-align: center; font-size: 12px; letter-spacing: .06em; color: var(--line); }
+  .loop input { position: absolute; opacity: 0; pointer-events: none; }
+  .loop:not(.on) { opacity: .42; }
+  .loop.on { box-shadow: inset 0 0 0 1px rgba(0,0,0,.28), 0 12px 34px rgba(30,30,40,.09); }
+  .seg { align-self: center; display: inline-flex; padding: 4px; border-radius: 999px; background: var(--glass); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10); }
+  .seg button { height: 32px; padding: 0 18px; border: 0; border-radius: 999px; cursor: pointer; background: transparent; font: 400 13px var(--sans); color: var(--fine); }
+  .seg button.on { background: #fff; color: var(--ink); box-shadow: 0 2px 10px rgba(30,30,40,.08); }
+  .set .row { margin-top: 18px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .set a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .devs { margin-top: 44px; text-align: center; }
   .devs .lbl { font-size: 11px; letter-spacing: .08em; color: var(--fine); }
   .devs ul { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
@@ -148,6 +189,12 @@
     <span class="who" id="who"></span>
     <button class="btn plain" id="out" type="button">sign out</button>
   </div>
+  <nav class="tabs" id="tabs">
+    <button class="tab on" type="button" data-tab="list">the list</button>
+    <button class="tab" type="button" data-tab="visits">visits</button>
+    <button class="tab" type="button" data-tab="page">beta page</button>
+  </nav>
+  <section class="pane" id="pane-list">
   <div class="head">
     <div class="count" id="count">–</div>
     <div class="count-l" id="countL">on the list.</div>
@@ -159,6 +206,35 @@
     <div class="status" id="status" role="status" aria-live="polite"></div>
   </div>
   <div class="list" id="list"></div>
+  </section>
+
+  <section class="pane" id="pane-visits" hidden>
+    <div class="head">
+      <div class="count" id="v7">–</div>
+      <div class="count-l">visits this week.</div>
+    </div>
+    <div class="nums" id="vnums"></div>
+    <div class="chart"><div class="bars" id="bars"></div><div class="axis" id="axis"></div>
+      <div class="key"><em></em>beta page<em class="lt"></em>gualo.site</div></div>
+    <div class="srcs" id="srcs"></div>
+    <div class="status" id="vstatus"></div>
+  </section>
+
+  <section class="pane" id="pane-page" hidden>
+    <form class="set" id="fCfg" novalidate>
+      <div class="lbl">the line</div>
+      <div class="pill"><input type="text" id="cLine" maxlength="60" placeholder="private beta soon. by invitation." aria-label="The line" autocomplete="off"></div>
+      <div class="lbl">fine print</div>
+      <div class="pill"><input type="text" id="cFine" maxlength="60" placeholder="Technology by Gualo Hawes" aria-label="Fine print" autocomplete="off"></div>
+      <div class="lbl">loops (one per visit, alternating)</div>
+      <div class="loops" id="cLoops"></div>
+      <div class="lbl">the list</div>
+      <div class="seg" id="cSign"><button type="button" data-v="open">open</button><button type="button" data-v="paused">paused</button></div>
+      <div class="row"><button class="btn" id="cSave" type="submit">save</button><a class="btn plain" href="/sycstem/" target="_blank" rel="noopener">view the page</a></div>
+      <div class="status" id="cstatus" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+
   <div class="devs" id="devs">
     <div class="lbl" id="devLbl">face id / touch id</div>
     <ul id="devList"></ul>
@@ -276,7 +352,7 @@
 
   function room() {
     $('gate').hidden = true; $('room').hidden = false; $('fine').hidden = true;
-    $('who').textContent = session.email || ''; load();
+    $('who').textContent = session.email || ''; load(); showTab(TAB);
   }
   function load() {
     return call('/list').then(function (j) {
@@ -327,8 +403,67 @@
       document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
     }).catch(function (err) { status(err.message, true); }).then(function () { b.disabled = false; });
   });
+  /* ── tabs ── */
+  var TAB = 'list'; try { TAB = localStorage.getItem('syc_admin_tab') || 'list'; } catch (e) {}
+  function showTab(t) {
+    TAB = t; try { localStorage.setItem('syc_admin_tab', t); } catch (e) {}
+    [].forEach.call(document.querySelectorAll('.tab'), function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === t); });
+    $('pane-list').hidden = t !== 'list'; $('pane-visits').hidden = t !== 'visits'; $('pane-page').hidden = t !== 'page';
+    if (t === 'visits') loadStats(); if (t === 'page') loadCfg();
+  }
+  $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) showTab(b.getAttribute('data-tab')); });
+
+  /* ── visits ── */
+  var SRC = { ig: 'Instagram', direct: 'direct / typed', google: 'Google', x: 'X', tiktok: 'TikTok', youtube: 'YouTube', site: 'gualo.site', test: 'test' };
+  function loadStats() {
+    return call('/stats').then(function (j) {
+      var t = j.totals; $('v7').textContent = t.home7 + t.beta7;
+      $('vnums').innerHTML = [[t.beta7, 'beta page · 7 days'], [t.home7, 'gualo.site · 7 days'], [t.beta30 + t.home30, 'visits · 30 days'],
+        [t.signups30, 'joined the list · 30 days'], [t.beta30 ? Math.round(100 * t.signups30 / t.beta30) + '%' : '–', 'of beta-page visits joined']]
+        .map(function (n) { return '<div><b>' + n[0] + '</b><span>' + n[1] + '</span></div>'; }).join('');
+      var max = Math.max(1, Math.max.apply(null, j.days.map(function (d) { return d.home + d.beta; })));
+      $('bars').innerHTML = j.days.map(function (d, i) {
+        var tot = d.home + d.beta;
+        return '<div class="bar' + (i === j.days.length - 1 ? ' today' : '') + '" style="height:' + (100 * tot / max).toFixed(1) + '%" title="' + d.day + ' · ' + d.beta + ' beta page · ' + d.home + ' gualo.site"><i style="height:' + (tot ? 100 * d.beta / tot : 0).toFixed(1) + '%"></i></div>';
+      }).join('');
+      var lab = function (day) { var p = day.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+      $('axis').innerHTML = '<span>' + lab(j.days[0].day) + '</span><span>' + lab(j.days[15].day) + '</span><span>today</span>';
+      var top = Math.max(1, j.sources.length ? j.sources[0].visits : 1);
+      $('srcs').innerHTML = j.sources.length ? j.sources.slice(0, 8).map(function (r) {
+        return '<div class="src"><span>' + esc(SRC[r.source] || r.source) + '</span><span class="track"><i style="width:' + (100 * r.visits / top).toFixed(1) + '%"></i></span><b>' + r.visits + '</b></div>';
+      }).join('') : '<div class="empty">no visits counted yet.</div>';
+      $('vstatus').textContent = 'counted by your own site: no cookies, nothing about the person.';
+    }).catch(function (err) { if (err.message !== 'signed out') { $('vstatus').textContent = err.message; } });
+  }
+
+  /* ── beta page settings ── */
+  var LOOPS = [{ name: 'forest', mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' },
+               { name: 'glitch', mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }];
+  var cfgSign = 'open';
+  $('cLoops').innerHTML = LOOPS.map(function (l) {
+    return '<label class="loop on" data-loop="' + l.name + '"><video muted loop playsinline autoplay preload="metadata" src="' + l.mp4 + '" style="filter:' + l.f + '"></video><input type="checkbox" checked><span>' + l.name + '</span></label>';
+  }).join('');
+  $('cLoops').addEventListener('change', function (e) { var lab = e.target.closest('.loop'); if (lab) lab.classList.toggle('on', e.target.checked); });
+  function setSign(v) { cfgSign = v; [].forEach.call($('cSign').children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === v); }); }
+  $('cSign').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setSign(b.getAttribute('data-v')); });
+  function loadCfg() {
+    return call('/config').then(function (j) {
+      var t = j.teaser; $('cLine').value = t.line; $('cFine').value = t.fine; setSign(t.signups);
+      [].forEach.call(document.querySelectorAll('.loop'), function (lab) { var on = t.loops.indexOf(lab.getAttribute('data-loop')) >= 0; lab.classList.toggle('on', on); lab.querySelector('input').checked = on; });
+      $('cstatus').textContent = '';
+    }).catch(function (err) { if (err.message !== 'signed out') $('cstatus').textContent = err.message; });
+  }
+  $('fCfg').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var loops = [].filter.call(document.querySelectorAll('.loop'), function (l) { return l.querySelector('input').checked; }).map(function (l) { return l.getAttribute('data-loop'); });
+    var b = $('cSave'); b.disabled = true; var st = $('cstatus'); st.className = 'status'; st.textContent = 'saving…';
+    call('/config', { method: 'POST', body: { teaser: { line: $('cLine').value, fine: $('cFine').value, loops: loops, signups: cfgSign } } })
+      .then(function () { st.textContent = 'saved — the page shows it within about 20 seconds.'; })
+      .catch(function (err) { st.textContent = err.message; st.className = 'status bad'; }).then(function () { b.disabled = false; });
+  });
+
   // keep it current while it's open
-  setInterval(function () { if (session && !document.hidden) load(); }, 60000);
+  setInterval(function () { if (session && !document.hidden) { load(); if (TAB === 'visits') loadStats(); } }, 60000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden && session) { load(); play(); } });
 
   /* start: a reset link, a saved session, or the sign-in */

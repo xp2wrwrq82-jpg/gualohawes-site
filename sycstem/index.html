@@ -68,7 +68,7 @@
   .after .n { margin-top: 6px; font-size: 12px; color: var(--grey); font-variant-numeric: tabular-nums; letter-spacing: .04em; min-height: 14px; }
   .after .ig { margin-top: 26px; width: 100%; }
   .after .ig.sent { display: none; }
-  body.in form, body.in .note { display: none; }
+  body.in form, body.in .note, body.closed form, body.closed .note { display: none; }
   body.in .after { display: flex; animation: appear 1.2s var(--ease) forwards; }
 
   .fine { position: fixed; z-index: 2; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0)); text-align: center;
@@ -115,15 +115,22 @@
   var $ = function (id) { return document.getElementById(id); };
   var q = new URLSearchParams(location.search), source = (q.get('ref') || q.get('utm_source') || (/instagram/i.test(navigator.userAgent) ? 'ig' : '') || 'direct').slice(0, 40);
   var email = '';
+  /* gualo.site/admin can change the line, the fine print, which loops play and whether the list is open.
+     The last copy this browser saw applies at once; a fresh one is fetched and lands before the line starts. */
+  var SITE = 'https://vault-y6mf.vercel.app/api/site', t0 = Date.now(), CFG = null;
+  try { CFG = JSON.parse(localStorage.getItem('syc_cfg') || 'null'); } catch (e) {}
 
   /* the frame for this visit: the same one for the whole session, the next one on the next visit */
   // each frame lifted to the same whiteness: the night forest is dark, the glitch is already bright
-  var FRAMES = [{ src: '/sycstem/bg/forest.webp', mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/glitch.webp', mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }], pick = 0;
+  var ALL = [{ src: '/sycstem/bg/forest.webp', mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/glitch.webp', mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }], FRAMES = ALL, pick = 0;
+  var loopName = function (f) { return f.mp4.split('/').pop().replace(/\.mp4$/, ''); };
+  if (CFG && CFG.loops) { var onLoops = ALL.filter(function (f) { return CFG.loops.indexOf(loopName(f)) >= 0; }); if (onLoops.length) FRAMES = onLoops; }
   try {
     var ss = sessionStorage.getItem('syc_frame');
     if (ss !== null) pick = +ss % FRAMES.length;
     else { var last = localStorage.getItem('syc_frame_last'); pick = last === null ? Math.floor(Math.random() * FRAMES.length) : (+last + 1) % FRAMES.length; localStorage.setItem('syc_frame_last', pick); sessionStorage.setItem('syc_frame', pick); }
   } catch (e) { pick = Math.floor(Math.random() * FRAMES.length); }
+  pick = pick % FRAMES.length;
   // the loop plays as a silent video (every phone, Instagram's browser); the animated image stays underneath if a phone won't autoplay
   var F = FRAMES[pick], img = $('frame'), vid = $('vid');
   img.style.filter = vid.style.filter = F.f;
@@ -135,11 +142,26 @@
   document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
 
   /* the line, letter by letter (after the mark has settled) */
-  (function () {
-    var el = $('line'), txt = el.textContent, html = '', d = 1.1;
-    for (var i = 0; i < txt.length; i++) { var ch = txt[i]; html += ch === ' ' ? '<span class="sp" aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">&nbsp;</span>' : '<span aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">' + ch + '</span>'; d += ch === '.' ? 0.32 : 0.045; }
+  function buildLine(txt) {
+    var el = $('line'), html = '', d = Math.max(0, 1.1 - (Date.now() - t0) / 1000);
+    el.setAttribute('aria-label', txt);
+    for (var i = 0; i < txt.length; i++) { var ch = txt[i]; html += ch === ' ' ? '<span class="sp" aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">&nbsp;</span>' : '<span aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">' + ch.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }) + '</span>'; d += ch === '.' ? 0.32 : 0.045; }
     el.innerHTML = html;
-  })();
+  }
+  var lineNow = $('line').textContent;
+  function applyCfg(c) {
+    if (!c) return;
+    if (typeof c.fine === 'string') document.querySelector('.fine').textContent = c.fine;
+    document.body.classList.toggle('closed', c.signups === 'paused');
+  }
+  if (CFG && CFG.line) lineNow = CFG.line;
+  buildLine(lineNow); applyCfg(CFG);
+  fetch(SITE + '/config', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+    var c = j && j.teaser; if (!c) return;
+    try { localStorage.setItem('syc_cfg', JSON.stringify(c)); } catch (e) {}
+    if (c.line && c.line !== lineNow && Date.now() - t0 < 1000) { lineNow = c.line; buildLine(lineNow); }
+    applyCfg(c);
+  }).catch(function () {});
   function readyState(input) { var w = input.closest('.field-in'); w.classList.toggle('ready', input.value.trim().length > 2); }
   $('email').addEventListener('input', function () { readyState(this); });
   $('handle').addEventListener('input', function () { readyState(this); });
@@ -170,6 +192,13 @@
   }
   $('save').addEventListener('click', saveHandle);
   $('handle').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveHandle(); } });
+
+  try {
+    var first = !sessionStorage.getItem('syc_seen'); sessionStorage.setItem('syc_seen', '1');
+    var ref = ''; try { ref = document.referrer ? new URL(document.referrer).host : ''; } catch (e) {}
+    var hit = JSON.stringify({ page: 'beta', src: source === 'direct' ? '' : source, ref: ref, first: first });
+    if (navigator.sendBeacon) navigator.sendBeacon(SITE + '/hit', new Blob([hit], { type: 'text/plain' }));
+  } catch (e) {}
 })();
 </script>
 </body>

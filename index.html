@@ -941,4 +941,14 @@
 /* live site: every "Join the beta" opens the SYCSTEM signup page */
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ba-beta,#pdBuy');if(!b)return;e.preventDefault();e.stopImmediatePropagation();location.href='/sycstem/?ref=site';},true);
 </script>
+<script>
+/* gualo.site/admin: one anonymous visit count (no cookies, nothing about the person) */
+(function () { try {
+  var q = new URLSearchParams(location.search), src = (q.get('ref') || q.get('utm_source') || (/instagram/i.test(navigator.userAgent) ? 'ig' : '')).slice(0, 24);
+  var first = !sessionStorage.getItem('syc_seen'); sessionStorage.setItem('syc_seen', '1');
+  var ref = ''; try { ref = document.referrer ? new URL(document.referrer).host : ''; } catch (e) {}
+  var hit = JSON.stringify({ page: 'home', src: src, ref: ref, first: first });
+  if (navigator.sendBeacon) navigator.sendBeacon('https://vault-y6mf.vercel.app/api/site/hit', new Blob([hit], { type: 'text/plain' }));
+} catch (e) {} })();
+</script>
 </body></html>
