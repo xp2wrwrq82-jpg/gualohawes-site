@@ -118,7 +118,7 @@
 
   /* the frame for this visit: the same one for the whole session, the next one on the next visit */
   // each frame lifted to the same whiteness: the night forest is dark, the glitch is already bright
-  var FRAMES = [{ src: '/sycstem/bg/1.webp', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/2.webp', f: 'blur(5px) saturate(.9) brightness(1.1)' }], pick = 0;
+  var FRAMES = [{ src: '/sycstem/bg/1.webp', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/2.webp', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }], pick = 0;
   try {
     var ss = sessionStorage.getItem('syc_frame');
     if (ss !== null) pick = +ss % FRAMES.length;
