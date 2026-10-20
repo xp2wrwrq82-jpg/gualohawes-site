@@ -46,18 +46,19 @@
   .line span.sp { width: .32em; }
   @keyframes letter { to { opacity: 1; filter: none; } }
 
-  form { width: 100%; max-width: 300px; margin-top: 34px; opacity: 0; animation: appear 1.6s var(--ease) 2.6s forwards; }
-  .field-in { position: relative; display: flex; align-items: center; height: 46px; border-bottom: 1px solid rgba(29,29,31,.22); transition: border-color .4s var(--ease); }
-  .field-in:focus-within { border-color: rgba(29,29,31,.55); }
-  .field-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; padding: 0 30px; text-align: center;
-    font: 400 16px var(--sans); letter-spacing: .02em; color: var(--ink); }
-  .field-in input::placeholder { color: #9a9aa0; letter-spacing: .06em; }
-  .arrow { position: absolute; right: 0; top: 50%; width: 30px; height: 30px; margin-top: -15px; border: 0; background: transparent; cursor: pointer;
-    color: var(--ink); display: grid; place-items: center; opacity: 0; transform: translateX(-4px); pointer-events: none; transition: opacity .35s var(--ease), transform .35s var(--ease); }
-  .arrow svg { width: 14px; height: 14px; }
-  .field-in.ready .arrow { opacity: .8; transform: none; pointer-events: auto; }
-  .arrow:hover { opacity: 1; }
-  .arrow:disabled { opacity: .3; cursor: default; }
+  form { width: 100%; margin-top: 32px; opacity: 0; animation: appear 1.6s var(--ease) 2.6s forwards; }
+  .field-in { position: relative; display: flex; align-items: center; height: 52px; border-radius: 999px;
+    background: rgba(255,255,255,.82); backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 10px 30px rgba(30,30,40,.06); transition: box-shadow .3s var(--ease); }
+  .field-in:focus-within { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.24), 0 12px 36px rgba(30,30,40,.09); }
+  .field-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; padding: 0 0 0 22px;
+    font: 400 16px var(--sans); letter-spacing: -.01em; color: var(--ink); }
+  .field-in input::placeholder { color: var(--soft); }
+  .arrow { flex: 0 0 auto; width: 36px; height: 36px; margin-right: 8px; border: 0; border-radius: 50%; cursor: pointer;
+    background: transparent; color: var(--grey); display: grid; place-items: center; transition: color .25s var(--ease), background .25s var(--ease), opacity .25s; }
+  .arrow svg { width: 15px; height: 15px; }
+  .field-in:focus-within .arrow, .arrow:hover { color: var(--ink); background: rgba(0,0,0,.04); }
+  .arrow:disabled { opacity: .4; cursor: default; }
   .note { margin-top: 14px; min-height: 15px; font-size: 12px; color: var(--grey); }
   .note.bad { color: #b3261e; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
@@ -65,7 +66,7 @@
   .after { display: none; flex-direction: column; align-items: center; margin-top: 30px; }
   .after .t { font-size: 14px; letter-spacing: .06em; color: #4a4a4f; }
   .after .n { margin-top: 6px; font-size: 12px; color: var(--grey); font-variant-numeric: tabular-nums; letter-spacing: .04em; min-height: 14px; }
-  .after .ig { margin-top: 26px; width: 100%; max-width: 300px; }
+  .after .ig { margin-top: 26px; width: 100%; }
   .after .ig.sent { display: none; }
   body.in form, body.in .note { display: none; }
   body.in .after { display: flex; animation: appear 1.2s var(--ease) forwards; }
@@ -85,7 +86,7 @@
 
     <form id="f" novalidate>
       <div class="field-in">
-        <input type="email" id="email" placeholder="email" autocomplete="email" inputmode="email" aria-label="Email" required>
+        <input type="email" id="email" placeholder="Email" autocomplete="email" inputmode="email" aria-label="Email" required>
         <button class="arrow" id="go" type="submit" aria-label="Request access"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
       </div>
       <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -97,7 +98,7 @@
       <div class="n" id="n"></div>
       <div class="ig" id="ig">
         <div class="field-in">
-          <input type="text" id="handle" placeholder="instagram (optional)" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Instagram">
+          <input type="text" id="handle" placeholder="Instagram, optional" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Instagram">
           <button class="arrow" id="save" type="button" aria-label="Save"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
         </div>
       </div>
@@ -113,13 +114,14 @@
   var email = '';
 
   /* the frame for this visit: the same one for the whole session, the next one on the next visit */
-  var FRAMES = ['/sycstem/bg/1.webp', '/sycstem/bg/2.webp'], pick = 0;
+  // each frame lifted to the same whiteness: the night forest is dark, the glitch is already bright
+  var FRAMES = [{ src: '/sycstem/bg/1.webp', f: 'blur(5px) saturate(.9) brightness(2.1) contrast(.8)' }, { src: '/sycstem/bg/2.webp', f: 'blur(5px) saturate(.9) brightness(1.1)' }], pick = 0;
   try {
     var ss = sessionStorage.getItem('syc_frame');
     if (ss !== null) pick = +ss % FRAMES.length;
     else { var last = localStorage.getItem('syc_frame_last'); pick = last === null ? Math.floor(Math.random() * FRAMES.length) : (+last + 1) % FRAMES.length; localStorage.setItem('syc_frame_last', pick); sessionStorage.setItem('syc_frame', pick); }
   } catch (e) { pick = Math.floor(Math.random() * FRAMES.length); }
-  var img = $('frame'); img.onload = function () { img.classList.add('on'); }; img.src = FRAMES[pick];
+  var img = $('frame'); img.onload = function () { img.classList.add('on'); }; img.style.filter = FRAMES[pick].f; img.src = FRAMES[pick].src;
 
   /* the line, letter by letter (after the mark has settled) */
   (function () {
