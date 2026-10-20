@@ -71,8 +71,10 @@
   body.in form, body.in .note { display: none; }
   body.in .after { display: flex; animation: appear 1.2s var(--ease) forwards; }
 
+  .fine { position: fixed; z-index: 2; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0)); text-align: center;
+    font-size: 11px; letter-spacing: .04em; color: #8e8e93; opacity: 0; animation: appear 1.6s var(--ease) 3.4s forwards; }
   @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .mark, form, .line span { opacity: 1; filter: none; } .reel img { transition: none; filter: blur(8px); } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .mark, form, .line span, .fine { opacity: 1; filter: none; } .reel img { transition: none; filter: blur(8px); } }
 </style>
 </head>
 <body>
@@ -105,6 +107,7 @@
     </div>
   </div>
 </main>
+<p class="fine">Technology by Gualo Hawes</p>
 
 <script>
 (function () {
