@@ -69,6 +69,7 @@
   /* ── signed in: the list ── */
   .room { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top, 0px)) 20px 120px; animation: appear 1s var(--ease) both; }
   .top { display: flex; align-items: center; gap: 12px; }
+  .top #out { margin-left: auto; }
   .top .who { flex: 1; min-width: 0; font-size: 12px; letter-spacing: .04em; color: var(--fine); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .head { margin-top: 56px; text-align: center; }
   .count { font-size: 56px; font-weight: 300; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
@@ -206,6 +207,8 @@
   .devs li .when { color: var(--fine); }
   .devs li button { margin-left: 8px; }
   .devs .btn { margin-top: 16px; }
+  .quietrow { margin-top: 22px; display: flex; justify-content: center; gap: 18px; }
+  .quietrow .btn { margin-top: 0; }
   .empty { padding: 44px 22px; text-align: center; font-size: 14px; letter-spacing: .06em; color: var(--line); }
   @media (max-width: 520px) {
     .row { grid-template-columns: 52px minmax(0, 1fr); padding: 14px 18px; }
@@ -253,7 +256,7 @@
 <main class="room" id="room" hidden>
   <div class="top">
     <svg class="mark" viewBox="0 0 1000 991.86" fill="currentColor" aria-hidden="true"><path d="M11.27,176.80L83.75,335.66A124.94,124.94 0 0 0 311.09,231.94L238.61,73.08A124.94,124.94 0 0 0 11.27,176.80Z"/><path d="M761.39,73.08L688.91,231.94A124.94,124.94 0 0 0 916.25,335.66L988.73,176.80A124.94,124.94 0 0 0 761.39,73.08Z"/><path d="M83.75,656.20L11.27,815.06A124.94,124.94 0 0 0 238.61,918.77L311.09,759.91A124.94,124.94 0 0 0 83.75,656.20Z"/><path d="M688.91,759.91L761.39,918.77A124.94,124.94 0 0 0 988.73,815.06L916.25,656.20A124.94,124.94 0 0 0 688.91,759.91Z"/></svg>
-    <span class="who" id="who"></span>
+    <span class="who" id="who" hidden></span>
     <button class="btn plain" id="out" type="button">sign out</button>
   </div>
   <nav class="tabs" id="tabs">
@@ -266,12 +269,10 @@
   <section class="pane" id="pane-list">
   <div class="head">
     <div class="count" id="count">–</div>
-    <div class="count-l" id="countL">on the list.</div>
-    <div class="live off" id="live"><i></i><span id="liveT">connecting…</span> · <button type="button" id="snd" aria-label="Signup sound">sound on</button></div>
+    <div class="live off" id="live" title="live"><i></i><span id="liveT" hidden>connecting…</span></div>
     <div class="whisper" id="whisper" aria-live="polite"></div>
     <div class="acts">
       <button class="btn" id="csv" type="button">download csv</button>
-      <button class="btn" id="test" type="button">send test alert</button>
     </div>
     <div class="status" id="alerts"></div>
     <div class="status" id="status" role="status" aria-live="polite"></div>
@@ -330,6 +331,7 @@
     <div class="lbl" id="devLbl">face id / touch id</div>
     <ul id="devList"></ul>
     <button class="btn" id="addDev" type="button">add this device</button>
+    <div class="quietrow"><button class="btn plain" type="button" id="snd">sound on</button><button class="btn plain" type="button" id="test">send test alert</button></div>
   </div>
 </main>
 
@@ -361,7 +363,11 @@
       });
   }
   function note(t, bad) { var n = $('gnote'); n.textContent = t || ''; n.className = 'note' + (bad ? ' bad' : ''); }
-  function status(t, bad) { var s = $('status'); s.textContent = t || ''; s.className = 'status' + (bad ? ' bad' : ''); }
+  var statusT = null;
+  function status(t, bad) {
+    var s = $('status'); s.textContent = t || ''; s.className = 'status' + (bad ? ' bad' : ''); clearTimeout(statusT);
+    if (t && !bad) statusT = setTimeout(function () { s.textContent = ''; }, 6000);
+  }
 
   /* ── passkeys: Touch ID on the Mac, Face ID on the iPhone (WebAuthn) ── */
   var PK = (function () {
@@ -461,7 +467,7 @@
         if (document.hidden) { unseen += nFresh; document.title = '(' + unseen + ') ' + baseTitle; }
         if (TAB !== 'list') { var t = document.querySelector('.tab[data-tab=list]'), b = t.querySelector('.badge') || t.appendChild(document.createElement('span')); b.className = 'badge'; b.textContent = '+' + ((+b.textContent.replace('+', '') || 0) + nFresh); }
       }
-      var al = $('alerts'); al.textContent = j.alerts.on ? 'email alerts on → ' + (j.alerts.to || '') : 'email alerts off — the key isn’t set on Vercel yet.'; al.className = 'status' + (j.alerts.on ? '' : ' bad');
+      var al = $('alerts'); al.textContent = j.alerts.on ? '' : 'email alerts are off — the key isn’t set on Vercel.'; al.className = 'status' + (j.alerts.on ? '' : ' bad'); al.hidden = j.alerts.on;
       $('list').innerHTML = j.rows.length ? j.rows.map(function (r) {
         var meta = [];
         if (r.handle) meta.push('<a href="https://instagram.com/' + encodeURIComponent(r.handle) + '" target="_blank" rel="noreferrer">@' + esc(r.handle) + '</a>');
@@ -539,7 +545,7 @@
   $('homeLine').addEventListener('change', function () { saveHome('saved.'); });
 
   var pulseSig = null, pulseT = null;
-  function liveState(on) { $('live').classList.toggle('off', !on); $('liveT').textContent = on ? 'live' : 'reconnecting…'; }
+  function liveState(on) { $('live').classList.toggle('off', !on); $('live').title = on ? 'live' : 'reconnecting…'; }
   function pulse() {
     clearTimeout(pulseT); if (!session) return;
     call('/pulse').then(function (j) {
@@ -608,7 +614,7 @@
       $('srcs').innerHTML = j.sources.length ? j.sources.slice(0, 8).map(function (r) {
         return '<div class="src"><span>' + esc(SRC[r.source] || r.source) + '</span><span class="track"><i style="width:' + (100 * r.visits / top).toFixed(1) + '%"></i></span><b>' + r.visits + '</b></div>';
       }).join('') : '<div class="empty">no visits counted yet.</div>';
-      $('vstatus').textContent = 'counted by your own site: no cookies, nothing about the person.';
+      $('vstatus').textContent = '';
     }).catch(function (err) { if (err.message !== 'signed out') { $('vstatus').textContent = err.message; } });
   }
 
