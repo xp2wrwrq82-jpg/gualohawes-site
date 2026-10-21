@@ -83,6 +83,16 @@
 
   .fine { position: fixed; z-index: 2; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0)); text-align: center;
     font-size: 11px; letter-spacing: .04em; color: #8e8e93; opacity: 0; animation: appear 1.6s var(--ease) 3.4s forwards; }
+  /* phones/tablets: the footage melts into Safari's strips (behind the clock, behind the address bar), which take the same colour */
+  :root { --edge-rgb: 235, 235, 234; }
+  .edge { display: none; }
+  @media (hover: none) and (pointer: coarse) {
+    .edge { display: block; position: fixed; z-index: 1; left: 0; right: 0; pointer-events: none; }
+    .edge.t { top: 0; height: 84px; background: linear-gradient(to bottom, rgba(var(--edge-rgb), 1) 0%, rgba(var(--edge-rgb), .94) 12%, rgba(var(--edge-rgb), .78) 28%,
+      rgba(var(--edge-rgb), .55) 46%, rgba(var(--edge-rgb), .3) 64%, rgba(var(--edge-rgb), .12) 82%, rgba(var(--edge-rgb), 0) 100%); }
+    .edge.b { bottom: 0; height: 110px; background: linear-gradient(to top, rgba(var(--edge-rgb), 1) 0%, rgba(var(--edge-rgb), .94) 12%, rgba(var(--edge-rgb), .78) 28%,
+      rgba(var(--edge-rgb), .55) 46%, rgba(var(--edge-rgb), .3) 64%, rgba(var(--edge-rgb), .12) 82%, rgba(var(--edge-rgb), 0) 100%); }
+  }
   @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .mark, form, .line span, .fine { opacity: 1; filter: none; } .reel img { transition: none; filter: blur(8px); } }
 </style>
@@ -90,6 +100,7 @@
 <body>
 <div class="reel" id="reel" aria-hidden="true"><img id="frame" alt=""><video id="vid" muted loop playsinline autoplay preload="auto" disablepictureinpicture></video></div>
 <div class="veil"></div>
+<div class="edge t" aria-hidden="true"></div><div class="edge b" aria-hidden="true"></div>
 
 <main>
   <div class="stage">
@@ -146,6 +157,7 @@
   function edgeColour(f) {
     var c = f.bg || '#ebebea', m = document.querySelector('meta[name="theme-color"]');
     document.documentElement.style.backgroundColor = c; document.body.style.backgroundColor = c; if (m) m.setAttribute('content', c);
+    var h = c.replace('#', ''); document.documentElement.style.setProperty('--edge-rgb', [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); }).join(', '));
   }
   edgeColour(F);
   img.style.filter = vid.style.filter = F.f;
