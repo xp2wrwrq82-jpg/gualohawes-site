@@ -108,6 +108,22 @@
   .count.tick { animation: tick 1s var(--ease); }
   @keyframes tick { from { opacity: .15; filter: blur(8px); } to { opacity: 1; filter: none; } }
   .tab .badge { margin-left: 6px; font-size: 11px; color: var(--ink); }
+  .live button { border: 0; background: none; padding: 0 0 0 4px; font: inherit; letter-spacing: inherit; color: var(--fine); cursor: pointer; }
+  .live button:hover { color: var(--ink); }
+  /* a new signup: light blooms from the count, the veil breathes thinner, a whisper under the count */
+  .bloom { position: fixed; z-index: 3; width: 120vmax; height: 120vmax; margin: -60vmax 0 0 -60vmax; border-radius: 50%; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,.55) 18%, rgba(255,255,255,0) 52%); }
+  .bloom.go { animation: bloom 2.6s cubic-bezier(.2,.7,.2,1) forwards; }
+  @keyframes bloom { 0% { opacity: 0; transform: scale(.08); } 22% { opacity: .9; } 100% { opacity: 0; transform: scale(1); } }
+  .veil.breathe { animation: breathe-veil 2.8s ease-in-out; }
+  @keyframes breathe-veil { 0%, 100% { opacity: 1; } 40% { opacity: .84; } }
+  .whisper { min-height: 18px; margin-top: 10px; font-size: 13px; letter-spacing: .06em; color: var(--line); opacity: 0; }
+  .whisper.go { animation: whisper 4.2s var(--ease) forwards; }
+  @keyframes whisper { 0% { opacity: 0; filter: blur(6px); } 18%, 70% { opacity: 1; filter: none; } 100% { opacity: 0; filter: blur(4px); } }
+  @media (prefers-reduced-motion: reduce) { .bloom, .veil.breathe { animation: none !important; } }
+  .homecard { margin-top: 34px; align-items: center; text-align: center; }
+  .homecard .note2 { font-size: 12px; color: var(--fine); line-height: 1.5; }
+  .homecard .note2 a { color: var(--grey); }
   .row.new .no { color: var(--ink); }
   .row.new .no::after { content: "new"; display: block; margin-top: 3px; font-size: 11px; color: var(--fine); }
   .tabs { margin-top: 30px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -204,6 +220,7 @@
 <body>
 <div class="reel" aria-hidden="true"><video id="vid" muted loop playsinline autoplay preload="auto" disablepictureinpicture></video></div>
 <div class="veil"></div>
+<div class="bloom" id="bloom" aria-hidden="true"></div>
 
 <!-- signed out -->
 <main class="gate" id="gate" hidden>
@@ -250,7 +267,8 @@
   <div class="head">
     <div class="count" id="count">–</div>
     <div class="count-l" id="countL">on the list.</div>
-    <div class="live off" id="live"><i></i><span id="liveT">connecting…</span></div>
+    <div class="live off" id="live"><i></i><span id="liveT">connecting…</span> · <button type="button" id="snd" aria-label="Signup sound">sound on</button></div>
+    <div class="whisper" id="whisper" aria-live="polite"></div>
     <div class="acts">
       <button class="btn" id="csv" type="button">download csv</button>
       <button class="btn" id="test" type="button">send test alert</button>
@@ -290,13 +308,21 @@
     </form>
   </section>
 
-  <section class="pane" id="pane-site" hidden><div class="ed" id="edSite"></div></section>
+  <section class="pane" id="pane-site" hidden>
+    <div class="sec homecard">
+      <div class="lbl" style="font-size:11px;letter-spacing:.08em;color:var(--fine)">gualo.site right now</div>
+      <div class="seg" id="homeSeg"><button type="button" data-v="soon">soon</button><button type="button" data-v="open">open</button></div>
+      <div class="pill" style="width:100%;max-width:360px"><input type="text" id="homeLine" maxlength="60" placeholder="soon." aria-label="The homepage line" autocomplete="off"></div>
+      <div class="note2" id="homeNote"></div>
+    </div>
+    <div class="ed" id="edSite"></div>
+  </section>
   <section class="pane" id="pane-shop" hidden><div class="ed" id="edShop"></div></section>
   <div class="savebar" id="savebar" hidden>
     <span class="msg" id="sMsg"></span>
     <button class="btn ink" id="sSave" type="button" disabled>save</button>
     <button class="btn" id="sUndo" type="button">undo last save</button>
-    <a class="btn plain" href="/" target="_blank" rel="noopener">view site</a>
+    <a class="btn plain" href="/work/" target="_blank" rel="noopener">view site</a>
   </div>
   <input type="file" id="pick" accept="image/jpeg,image/png,image/webp" multiple hidden>
 
@@ -430,6 +456,8 @@
       shownTotal = j.total;
       $('count').textContent = j.total;
       if (nFresh) {
+        var newest = j.rows.filter(function (r) { return fresh[r.email]; })[0];
+        arrival(nFresh, newest);
         if (document.hidden) { unseen += nFresh; document.title = '(' + unseen + ') ' + baseTitle; }
         if (TAB !== 'list') { var t = document.querySelector('.tab[data-tab=list]'), b = t.querySelector('.badge') || t.appendChild(document.createElement('span')); b.className = 'badge'; b.textContent = '+' + ((+b.textContent.replace('+', '') || 0) + nFresh); }
       }
@@ -451,6 +479,65 @@
       }).join('');
     }).catch(function (err) { if (err.message !== 'signed out') status(err.message, true); });
   }
+  /* ── a new signup: the moment ── */
+  var AC = null, soundOn = true; try { soundOn = localStorage.getItem('syc_sound') !== 'off'; } catch (e) {}
+  function sndLabel() { $('snd').textContent = soundOn ? 'sound on' : 'sound off'; }
+  function audio() {
+    if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+    if (AC.state === 'suspended') AC.resume();
+    return AC;
+  }
+  // browsers only allow sound after you've touched the page — any tap or click (Touch ID included) unlocks it
+  ['pointerdown', 'keydown', 'touchend'].forEach(function (ev) { document.addEventListener(ev, function () { if (soundOn) audio(); }, { passive: true }); });
+  $('snd').addEventListener('click', function () { soundOn = !soundOn; try { localStorage.setItem('syc_sound', soundOn ? 'on' : 'off'); } catch (e) {} sndLabel(); if (soundOn) chime(); });
+  sndLabel();
+  // a small glass chime: two soft sines a fifth apart (+ a faint octave), a breath of filtered air, quiet and short
+  function chime() {
+    var ac = audio(); if (!ac || ac.state !== 'running') return;
+    var t = ac.currentTime + .02, out = ac.createGain(), lp = ac.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 3400; lp.Q.value = .3; out.connect(lp); lp.connect(ac.destination);
+    out.gain.setValueAtTime(.0001, t); out.gain.exponentialRampToValueAtTime(.07, t + .025); out.gain.exponentialRampToValueAtTime(.0001, t + 2.8);
+    [[659.25, 1, 0], [987.77, .55, .07], [1318.51, .18, .14]].forEach(function (p, i) {
+      var o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = p[0]; o.detune.value = (i - 1) * 4;
+      g.gain.setValueAtTime(.0001, t + p[2]); g.gain.exponentialRampToValueAtTime(p[1], t + p[2] + .02); g.gain.exponentialRampToValueAtTime(.0001, t + 2.7);
+      o.connect(g); g.connect(out); o.start(t + p[2]); o.stop(t + 2.9);
+    });
+    var len = Math.floor(ac.sampleRate * .7), buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    var n = ac.createBufferSource(), bp = ac.createBiquadFilter(), ng = ac.createGain();
+    n.buffer = buf; bp.type = 'bandpass'; bp.frequency.value = 5600; bp.Q.value = .7; ng.gain.value = .05; n.connect(bp); bp.connect(ng); ng.connect(out); n.start(t);
+  }
+  function arrival(n, r) {
+    if (soundOn) chime();
+    if (document.hidden || TAB !== 'list') return;
+    var c = $('count').getBoundingClientRect(), b = $('bloom'), v = document.querySelector('.veil'), w = $('whisper');
+    b.style.left = (c.left + c.width / 2) + 'px'; b.style.top = (c.top + c.height / 2) + 'px';
+    [b, v, w].forEach(function (el) { el.classList.remove('go', 'breathe'); void el.offsetWidth; });
+    b.classList.add('go'); v.classList.add('breathe');
+    w.textContent = n > 1 ? n + ' people just joined.' : (r && r.handle ? '@' + r.handle + ' just joined.' : 'someone just joined.');
+    w.classList.add('go');
+  }
+
+  /* ── gualo.site right now: soon / open ── */
+  var homeMode = 'soon', openArm = false;
+  function homeView() {
+    [].forEach.call($('homeSeg').children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === homeMode); });
+    $('homeNote').innerHTML = homeMode === 'soon' ? 'visitors see only this line. your work stays hidden — <a href="/work/" target="_blank" rel="noopener">preview it</a> (only you can).'
+      : 'open — gualo.site shows your work to everyone.';
+  }
+  function loadHome() { return call('/config').then(function (j) { homeMode = j.home.mode; $('homeLine').value = j.home.line; homeView(); }).catch(function () {}); }
+  function saveHome(msg) {
+    return call('/config', { method: 'POST', body: { home: { mode: homeMode, line: $('homeLine').value } } })
+      .then(function (j) { homeMode = j.home.mode; $('homeLine').value = j.home.line; homeView(); $('homeNote').insertAdjacentHTML('beforeend', '<br>' + msg); })
+      .catch(function (err) { $('homeNote').textContent = err.message; });
+  }
+  $('homeSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var v = b.getAttribute('data-v'); if (v === homeMode) return;
+    if (v === 'open' && !openArm) { openArm = true; b.textContent = 'tap again to open'; setTimeout(function () { openArm = false; b.textContent = 'open'; }, 3000); return; }
+    openArm = false; b.textContent = v; homeMode = v; saveHome(v === 'open' ? 'saved — the work is live within about 20 seconds.' : 'saved — back to “soon” within about 20 seconds.');
+  });
+  $('homeLine').addEventListener('change', function () { saveHome('saved.'); });
+
   var pulseSig = null, pulseT = null;
   function liveState(on) { $('live').classList.toggle('off', !on); $('liveT').textContent = on ? 'live' : 'reconnecting…'; }
   function pulse() {
@@ -498,7 +585,7 @@
     $('pane-list').hidden = t !== 'list'; $('pane-visits').hidden = t !== 'visits'; $('pane-page').hidden = t !== 'page';
     $('pane-site').hidden = t !== 'site'; $('pane-shop').hidden = t !== 'shop'; $('savebar').hidden = t !== 'site' && t !== 'shop';
     $('devs').hidden = t === 'site' || t === 'shop';
-    if (t === 'visits') loadStats(); if (t === 'page') loadCfg(); if (t === 'site' || t === 'shop') loadContent();
+    if (t === 'visits') loadStats(); if (t === 'page') loadCfg(); if (t === 'site' || t === 'shop') loadContent(); if (t === 'site') loadHome();
   }
   $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) showTab(b.getAttribute('data-tab')); });
 

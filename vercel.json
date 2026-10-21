@@ -33,6 +33,13 @@
       "continue": true
     },
     {
+      "src": "/work(/.*)?",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow"
+      },
+      "continue": true
+    },
+    {
       "handle": "filesystem"
     }
   ]
