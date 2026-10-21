@@ -26,7 +26,7 @@
     color-scheme: light;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
+  html, body { height: 100%; overscroll-behavior: none; }
   body { background: #f5f5f6; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
   ::selection { background: #1d1d1f; color: #fff; }
 
@@ -38,6 +38,16 @@
     background: radial-gradient(120% 90% at 50% 46%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.82) 55%, rgba(250,250,251,.85) 100%); }
 
   main { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; text-align: center; }
+  @supports (height: 100dvh) { main { height: 100dvh; } }
+  main { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+  /* phones: the footage and the veil cover the LARGEST screen (behind Safari's toolbars as they slide away), the words stay
+     centred in what's actually visible, nothing rubber-bands, and in landscape the text keeps clear of the notch */
+  html { background: #f5f5f6; overscroll-behavior: none; }
+  @supports (height: 100lvh) {
+    .reel { inset: auto; top: -6lvh; left: -6vw; width: 112vw; height: 112lvh; }
+    .veil { inset: auto; top: 0; left: 0; width: 100vw; height: 100lvh; }
+  }
+
   .stage { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; }
   .mark { width: 14px; height: 14px; color: var(--soft); opacity: 0; animation: appear 1.4s var(--ease) .5s forwards; }
   /* one line, lowercase, surfacing letter by letter out of the blur */
@@ -88,7 +98,7 @@
 
     <form id="f" novalidate>
       <div class="field-in">
-        <input type="email" id="email" placeholder="Email" autocomplete="email" inputmode="email" aria-label="Email" required>
+        <input type="email" id="email" placeholder="email for an invitation" autocomplete="email" inputmode="email" aria-label="email for an invitation" required>
         <button class="arrow" id="go" type="submit" aria-label="Request access"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
       </div>
       <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -152,6 +162,7 @@
   function applyCfg(c) {
     if (!c) return;
     if (typeof c.fine === 'string') document.querySelector('.fine').textContent = c.fine;
+    if (c.ask) { $('email').placeholder = c.ask; $('email').setAttribute('aria-label', c.ask); }
     document.body.classList.toggle('closed', c.signups === 'paused');
   }
   if (CFG && CFG.line) lineNow = CFG.line;
@@ -160,6 +171,10 @@
     var c = j && j.teaser; if (!c) return;
     try { localStorage.setItem('syc_cfg', JSON.stringify(c)); } catch (e) {}
     if (c.line && c.line !== lineNow && Date.now() - t0 < 1000) { lineNow = c.line; buildLine(lineNow); }
+    if (c.loops && c.loops.indexOf(loopName(F)) < 0 && Date.now() - t0 < 1500) {
+      var allowed = ALL.filter(function (f) { return c.loops.indexOf(loopName(f)) >= 0; });
+      if (allowed.length) { F = allowed[pick % allowed.length]; img.style.filter = vid.style.filter = F.f; img.src = F.src; vid.src = F.mp4; vid.muted = true; tryPlay(); }
+    }
     applyCfg(c);
   }).catch(function () {});
   function readyState(input) { var w = input.closest('.field-in'); w.classList.toggle('ready', input.value.trim().length > 2); }

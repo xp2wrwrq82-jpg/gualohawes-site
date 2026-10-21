@@ -28,6 +28,13 @@
   .reel video.on { opacity: 1; }
   .veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background: radial-gradient(120% 90% at 50% 46%, rgba(255,255,255,.88) 0%, rgba(255,255,255,.85) 55%, rgba(250,250,251,.87) 100%); }
+  /* phones: the footage and the veil cover the LARGEST screen (behind Safari's toolbars as they slide away) and nothing rubber-bands */
+  html { background: #f5f5f6; overscroll-behavior: none; }
+  @supports (height: 100lvh) {
+    .reel { inset: auto; top: -6lvh; left: -6vw; width: 112vw; height: 112lvh; }
+    .veil { inset: auto; top: 0; left: 0; width: 100vw; height: 100lvh; }
+  }
+
 
   @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
   .mark { width: 14px; height: 14px; color: var(--soft); flex: 0 0 auto; }
@@ -258,6 +265,8 @@
     <form class="set" id="fCfg" novalidate>
       <div class="lbl">the line</div>
       <div class="pill"><input type="text" id="cLine" maxlength="60" placeholder="private beta soon. by invitation." aria-label="The line" autocomplete="off"></div>
+      <div class="lbl">inside the pill (until they type)</div>
+      <div class="pill"><input type="text" id="cAsk" maxlength="40" placeholder="email for an invitation" aria-label="Pill text" autocomplete="off"></div>
       <div class="lbl">fine print</div>
       <div class="pill"><input type="text" id="cFine" maxlength="60" placeholder="Technology by Gualo Hawes" aria-label="Fine print" autocomplete="off"></div>
       <div class="lbl">loops (one per visit, alternating)</div>
@@ -494,7 +503,7 @@
   $('cSign').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setSign(b.getAttribute('data-v')); });
   function loadCfg() {
     return call('/config').then(function (j) {
-      var t = j.teaser; $('cLine').value = t.line; $('cFine').value = t.fine; setSign(t.signups);
+      var t = j.teaser; $('cLine').value = t.line; $('cAsk').value = t.ask || ''; $('cFine').value = t.fine; setSign(t.signups);
       [].forEach.call(document.querySelectorAll('.loop'), function (lab) { var on = t.loops.indexOf(lab.getAttribute('data-loop')) >= 0; lab.classList.toggle('on', on); lab.querySelector('input').checked = on; });
       $('cstatus').textContent = '';
     }).catch(function (err) { if (err.message !== 'signed out') $('cstatus').textContent = err.message; });
@@ -503,7 +512,7 @@
     e.preventDefault();
     var loops = [].filter.call(document.querySelectorAll('.loop'), function (l) { return l.querySelector('input').checked; }).map(function (l) { return l.getAttribute('data-loop'); });
     var b = $('cSave'); b.disabled = true; var st = $('cstatus'); st.className = 'status'; st.textContent = 'saving…';
-    call('/config', { method: 'POST', body: { teaser: { line: $('cLine').value, fine: $('cFine').value, loops: loops, signups: cfgSign } } })
+    call('/config', { method: 'POST', body: { teaser: { line: $('cLine').value, ask: $('cAsk').value, fine: $('cFine').value, loops: loops, signups: cfgSign } } })
       .then(function () { st.textContent = 'saved — the page shows it within about 20 seconds.'; })
       .catch(function (err) { st.textContent = err.message; st.className = 'status bad'; }).then(function () { b.disabled = false; });
   });
