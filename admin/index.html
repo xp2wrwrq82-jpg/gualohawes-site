@@ -97,6 +97,17 @@
   .row .meta { grid-column: 2 / 4; font-size: 12px; letter-spacing: .02em; color: var(--grey); }
   .row .meta a { color: inherit; text-decoration: none; }
   .row .meta a:hover, .row .em a:hover { color: var(--ink); }
+  /* live: a breathing dot while connected; a new signup arrives out of the blur with a soft highlight that fades */
+  .live { margin-top: 12px; display: inline-flex; align-items: center; gap: 7px; font-size: 11px; letter-spacing: .06em; color: var(--fine); }
+  .live i { width: 6px; height: 6px; border-radius: 50%; background: #8e8e93; animation: breathe 2.4s ease-in-out infinite; }
+  .live.off i { animation: none; opacity: .3; }
+  @keyframes breathe { 0%, 100% { opacity: .3; transform: scale(.8); } 50% { opacity: 1; transform: scale(1); } }
+  .row.fresh { animation: arrive 1.2s var(--ease) both, glow 7s ease-out both; }
+  @keyframes arrive { from { opacity: 0; filter: blur(8px); transform: translateY(-8px); } to { opacity: 1; filter: none; transform: none; } }
+  @keyframes glow { from { background: rgba(29,29,31,.07); } to { background: rgba(29,29,31,0); } }
+  .count.tick { animation: tick 1s var(--ease); }
+  @keyframes tick { from { opacity: .15; filter: blur(8px); } to { opacity: 1; filter: none; } }
+  .tab .badge { margin-left: 6px; font-size: 11px; color: var(--ink); }
   .row.new .no { color: var(--ink); }
   .row.new .no::after { content: "new"; display: block; margin-top: 3px; font-size: 11px; color: var(--fine); }
   .tabs { margin-top: 30px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
@@ -239,6 +250,7 @@
   <div class="head">
     <div class="count" id="count">–</div>
     <div class="count-l" id="countL">on the list.</div>
+    <div class="live off" id="live"><i></i><span id="liveT">connecting…</span></div>
     <div class="acts">
       <button class="btn" id="csv" type="button">download csv</button>
       <button class="btn" id="test" type="button">send test alert</button>
@@ -405,18 +417,28 @@
 
   function room() {
     $('gate').hidden = true; $('room').hidden = false; $('fine').hidden = true;
-    $('who').textContent = session.email || ''; load(); showTab(TAB);
+    $('who').textContent = session.email || ''; known = null; shownTotal = null; pulseSig = null; load().then(pulse); showTab(TAB);
   }
+  var known = null, shownTotal = null, unseen = 0, baseTitle = document.title;
   function load() {
     return call('/list').then(function (j) {
       var seen = 0; try { seen = +localStorage.getItem(SEEN) || 0; } catch (e) {}
+      var fresh = {}, nFresh = 0;
+      if (known) j.rows.forEach(function (r) { if (!known[r.email]) { fresh[r.email] = 1; nFresh++; } });
+      known = {}; j.rows.forEach(function (r) { known[r.email] = 1; });
+      if (shownTotal !== null && j.total !== shownTotal) { var c = $('count'); c.classList.remove('tick'); void c.offsetWidth; c.classList.add('tick'); }
+      shownTotal = j.total;
       $('count').textContent = j.total;
+      if (nFresh) {
+        if (document.hidden) { unseen += nFresh; document.title = '(' + unseen + ') ' + baseTitle; }
+        if (TAB !== 'list') { var t = document.querySelector('.tab[data-tab=list]'), b = t.querySelector('.badge') || t.appendChild(document.createElement('span')); b.className = 'badge'; b.textContent = '+' + ((+b.textContent.replace('+', '') || 0) + nFresh); }
+      }
       var al = $('alerts'); al.textContent = j.alerts.on ? 'email alerts on → ' + (j.alerts.to || '') : 'email alerts off — the key isn’t set on Vercel yet.'; al.className = 'status' + (j.alerts.on ? '' : ' bad');
       $('list').innerHTML = j.rows.length ? j.rows.map(function (r) {
         var meta = [];
         if (r.handle) meta.push('<a href="https://instagram.com/' + encodeURIComponent(r.handle) + '" target="_blank" rel="noreferrer">@' + esc(r.handle) + '</a>');
         meta.push('from ' + esc(FROM[r.source] || r.source || 'direct link'));
-        return '<div class="row' + (seen && r.n > seen ? ' new' : '') + '"><span class="no">' + place(r.n) + '</span>' +
+        return '<div class="row' + (seen && r.n > seen ? ' new' : '') + (fresh[r.email] ? ' fresh' : '') + '"><span class="no">' + place(r.n) + '</span>' +
           '<span class="em"><a href="mailto:' + esc(r.email) + '">' + esc(r.email) + '</a></span><span class="at">' + when(r.at) + '</span>' +
           '<span class="meta">' + meta.join(' · ') + '</span></div>';
       }).join('') : '<div class="empty">no one yet. post the link.</div>';
@@ -428,6 +450,17 @@
           '<button class="btn plain" type="button" data-rm="' + esc(d.id) + '" data-name="' + esc(d.name) + '">remove</button></li>';
       }).join('');
     }).catch(function (err) { if (err.message !== 'signed out') status(err.message, true); });
+  }
+  var pulseSig = null, pulseT = null;
+  function liveState(on) { $('live').classList.toggle('off', !on); $('liveT').textContent = on ? 'live' : 'reconnecting…'; }
+  function pulse() {
+    clearTimeout(pulseT); if (!session) return;
+    call('/pulse').then(function (j) {
+      var sig = j.total + '|' + j.last;
+      if (pulseSig === null ? (shownTotal !== null && j.total !== shownTotal) : sig !== pulseSig) load();
+      pulseSig = sig; liveState(true);
+    }).catch(function () { liveState(false); })
+      .then(function () { if (session) pulseT = setTimeout(pulse, document.hidden ? 15000 : 3000); });
   }
   $('out').addEventListener('click', function () { signOut(''); });
   $('addDev').addEventListener('click', function () {
@@ -460,6 +493,7 @@
   var TAB = 'list'; try { TAB = localStorage.getItem('syc_admin_tab') || 'list'; } catch (e) {}
   function showTab(t) {
     TAB = t; try { localStorage.setItem('syc_admin_tab', t); } catch (e) {}
+    if (t === 'list') { var bd = document.querySelector('.tab[data-tab=list] .badge'); if (bd) bd.remove(); }
     [].forEach.call(document.querySelectorAll('.tab'), function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === t); });
     $('pane-list').hidden = t !== 'list'; $('pane-visits').hidden = t !== 'visits'; $('pane-page').hidden = t !== 'page';
     $('pane-site').hidden = t !== 'site'; $('pane-shop').hidden = t !== 'shop'; $('savebar').hidden = t !== 'site' && t !== 'shop';
@@ -661,8 +695,10 @@
   });
 
   // keep it current while it's open
-  setInterval(function () { if (session && !document.hidden) { load(); if (TAB === 'visits') loadStats(); } }, 60000);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden && session) { load(); play(); } });
+  setInterval(function () { if (session && !document.hidden && TAB === 'visits') loadStats(); }, 60000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) { unseen = 0; document.title = baseTitle; if (session) { pulse(); play(); } }
+  });
 
   /* start: a reset link, a saved session, or the sign-in */
   function start() {
