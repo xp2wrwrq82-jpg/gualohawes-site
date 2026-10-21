@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SYCSTEM</title>
 <meta name="description" content="private beta soon. by invitation.">
-<meta name="theme-color" content="#f5f5f6">
+<meta name="theme-color" content="#ebebea">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SYCSTEM">
 <meta property="og:description" content="private beta soon. by invitation.">
@@ -42,7 +42,7 @@
   main { padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
   /* phones: the footage and the veil cover the LARGEST screen (behind Safari's toolbars as they slide away), the words stay
      centred in what's actually visible, nothing rubber-bands, and in landscape the text keeps clear of the notch */
-  html { background: #f5f5f6; overscroll-behavior: none; }
+  html { background: #ebebea; overscroll-behavior: none; }
   @supports (height: 100lvh) {
     .reel { inset: auto; top: -6lvh; left: -6vw; width: 112vw; height: 112lvh; }
     .veil { inset: auto; top: 0; left: 0; width: 100vw; height: 100lvh; }
@@ -132,7 +132,7 @@
 
   /* the frame for this visit: the same one for the whole session, the next one on the next visit */
   // each frame lifted to the same whiteness: the night forest is dark, the glitch is already bright
-  var ALL = [{ src: '/sycstem/bg/forest.webp', mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)' }, { src: '/sycstem/bg/glitch.webp', mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)' }], FRAMES = ALL, pick = 0;
+  var ALL = [{ src: '/sycstem/bg/forest.webp', mp4: '/sycstem/bg/forest.mp4', f: 'blur(5px) saturate(.85) contrast(.45) brightness(1.75)', bg: '#ececea' }, { src: '/sycstem/bg/glitch.webp', mp4: '/sycstem/bg/glitch.mp4', f: 'blur(5px) saturate(.85) contrast(.55) brightness(1.5)', bg: '#e9eaea' }], FRAMES = ALL, pick = 0;
   var loopName = function (f) { return f.mp4.split('/').pop().replace(/\.mp4$/, ''); };
   if (CFG && CFG.loops) { var onLoops = ALL.filter(function (f) { return CFG.loops.indexOf(loopName(f)) >= 0; }); if (onLoops.length) FRAMES = onLoops; }
   try {
@@ -143,6 +143,11 @@
   pick = pick % FRAMES.length;
   // the loop plays as a silent video (every phone, Instagram's browser); the animated image stays underneath if a phone won't autoplay
   var F = FRAMES[pick], img = $('frame'), vid = $('vid');
+  function edgeColour(f) {
+    var c = f.bg || '#ebebea', m = document.querySelector('meta[name="theme-color"]');
+    document.documentElement.style.backgroundColor = c; document.body.style.backgroundColor = c; if (m) m.setAttribute('content', c);
+  }
+  edgeColour(F);
   img.style.filter = vid.style.filter = F.f;
   img.onload = function () { img.classList.add('on'); }; img.src = F.src;
   vid.src = F.mp4; vid.muted = true;
@@ -173,7 +178,7 @@
     if (c.line && c.line !== lineNow && Date.now() - t0 < 1000) { lineNow = c.line; buildLine(lineNow); }
     if (c.loops && c.loops.indexOf(loopName(F)) < 0 && Date.now() - t0 < 1500) {
       var allowed = ALL.filter(function (f) { return c.loops.indexOf(loopName(f)) >= 0; });
-      if (allowed.length) { F = allowed[pick % allowed.length]; img.style.filter = vid.style.filter = F.f; img.src = F.src; vid.src = F.mp4; vid.muted = true; tryPlay(); }
+      if (allowed.length) { F = allowed[pick % allowed.length]; edgeColour(F); img.style.filter = vid.style.filter = F.f; img.src = F.src; vid.src = F.mp4; vid.muted = true; tryPlay(); }
     }
     applyCfg(c);
   }).catch(function () {});
