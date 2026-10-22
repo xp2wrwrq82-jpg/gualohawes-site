@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VHS</title>
+<meta name="description" content="a vhs camera. beta soon.">
+<meta name="theme-color" content="#ecebea">
+<meta property="og:type" content="website">
+<meta property="og:title" content="VHS">
+<meta property="og:description" content="a vhs camera. beta soon.">
+<meta property="og:url" content="https://gualo.site/vhs/">
+<meta property="og:image" content="https://gualo.site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VHS">
+<meta name="twitter:description" content="a vhs camera. beta soon.">
+<meta name="twitter:image" content="https://gualo.site/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1d1f' stroke-width='1.6'%3E%3Crect x='2.5' y='6' width='19' height='12' rx='2'/%3E%3Ccircle cx='8.5' cy='12' r='2.2'/%3E%3Ccircle cx='15.5' cy='12' r='2.2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #1d1d1f; --grey: #6e6e73; --soft: #a1a1a6;
+    --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+    --ease: cubic-bezier(.22,.61,.36,1);
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overscroll-behavior: none; }
+  html { background: #ecebea; }
+  body { background: #f5f5f6; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+  ::selection { background: #1d1d1f; color: #fff; }
+
+  /* the tape: grain + a slow tracking band, drawn small and blown up soft, then washed in white like the SYCSTEM page */
+  .tape { position: fixed; inset: -4%; width: 108%; height: 108%; z-index: 0; pointer-events: none; filter: blur(1.4px) saturate(.9); opacity: 0; transition: opacity 1.6s var(--ease); }
+  .tape.on { opacity: 1; }
+  .veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 46%, rgba(255,255,255,.80) 0%, rgba(255,255,255,.74) 55%, rgba(250,250,251,.80) 100%); }
+  @supports (height: 100lvh) {
+    .tape { inset: auto; top: -4lvh; left: -4vw; width: 108vw; height: 108lvh; }
+    .veil { inset: auto; top: 0; left: 0; width: 100vw; height: 100lvh; }
+  }
+
+  /* camcorder readout, faint, in the corners */
+  .osd { position: fixed; z-index: 2; font: 500 11px/1 var(--mono); letter-spacing: .12em; color: rgba(29,29,31,.38); opacity: 0; animation: appear 1.6s var(--ease) 1.2s forwards; }
+  .osd.tl { top: calc(22px + env(safe-area-inset-top, 0)); left: max(24px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; gap: 7px; }
+  .osd.tr { top: calc(22px + env(safe-area-inset-top, 0)); right: max(24px, env(safe-area-inset-right, 0px)); font-variant-numeric: tabular-nums; }
+  .osd .dot { width: 7px; height: 7px; border-radius: 50%; background: #d33a2c; opacity: .75; animation: blink 1.4s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  main { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    padding: 0 max(24px, env(safe-area-inset-right, 0px)) 0 max(24px, env(safe-area-inset-left, 0px)); }
+  @supports (height: 100dvh) { main { height: 100dvh; } }
+
+  .stage { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; }
+  .mark { width: 22px; height: 22px; color: var(--soft); opacity: 0; animation: appear 1.4s var(--ease) .5s forwards; }
+  .line { margin-top: 26px; font-size: 14px; letter-spacing: .06em; color: #4a4a4f; white-space: nowrap; }
+  .line span { display: inline-block; opacity: 0; filter: blur(6px); animation: letter 1.4s var(--ease) forwards; }
+  .line span.sp { width: .32em; }
+  @keyframes letter { to { opacity: 1; filter: none; } }
+
+  form { width: 100%; margin-top: 32px; opacity: 0; animation: appear 1.6s var(--ease) 2.2s forwards; }
+  .field-in { position: relative; display: flex; align-items: center; height: 52px; border-radius: 999px;
+    background: rgba(255,255,255,.82); backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 10px 30px rgba(30,30,40,.06); transition: box-shadow .3s var(--ease); }
+  .field-in:focus-within { box-shadow: inset 0 0 0 .5px rgba(0,0,0,.24), 0 12px 36px rgba(30,30,40,.09); }
+  .field-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; padding: 0 0 0 22px;
+    font: 400 16px var(--sans); letter-spacing: -.01em; color: var(--ink); }
+  .field-in input::placeholder { color: var(--soft); }
+  .arrow { flex: 0 0 auto; width: 36px; height: 36px; margin-right: 8px; border: 0; border-radius: 50%; cursor: pointer;
+    background: transparent; color: var(--grey); display: grid; place-items: center; transition: color .25s var(--ease), background .25s var(--ease), opacity .25s; }
+  .arrow svg { width: 15px; height: 15px; }
+  .field-in:focus-within .arrow, .arrow:hover { color: var(--ink); background: rgba(0,0,0,.04); }
+  .arrow:disabled { opacity: .4; cursor: default; }
+  .note { margin-top: 14px; min-height: 15px; font-size: 12px; color: var(--grey); }
+  .note.bad { color: #b3261e; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+  .after { display: none; flex-direction: column; align-items: center; margin-top: 30px; }
+  .after .t { font-size: 14px; letter-spacing: .06em; color: #4a4a4f; }
+  .after .n { margin-top: 6px; font-size: 12px; color: var(--grey); font-variant-numeric: tabular-nums; letter-spacing: .04em; min-height: 14px; }
+  .after .ig { margin-top: 26px; width: 100%; }
+  .after .ig.sent { display: none; }
+  body.in form, body.in .note { display: none; }
+  body.in .after { display: flex; animation: appear 1.2s var(--ease) forwards; }
+
+  .fine { position: fixed; z-index: 2; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0)); text-align: center;
+    font-size: 11px; letter-spacing: .04em; color: #8e8e93; opacity: 0; animation: appear 1.6s var(--ease) 3s forwards; }
+  @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; } .mark, form, .line span, .fine, .osd { opacity: 1; filter: none; } .osd .dot { opacity: .75; }
+  }
+</style>
+</head>
+<body>
+<canvas class="tape" id="tape" aria-hidden="true"></canvas>
+<div class="veil"></div>
+<div class="osd tl" aria-hidden="true"><i class="dot"></i>REC</div>
+<div class="osd tr" aria-hidden="true" id="tc">SP 0:00:00</div>
+
+<main>
+  <div class="stage">
+    <svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" role="img" aria-label="VHS">
+      <rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="8.5" cy="12" r="2.2"/><circle cx="15.5" cy="12" r="2.2"/><path d="M10.7 12h2.6"/>
+    </svg>
+    <p class="line" id="line" aria-label="a vhs camera. beta soon.">a vhs camera. beta soon.</p>
+
+    <form id="f" novalidate>
+      <div class="field-in">
+        <input type="email" id="email" placeholder="email for the beta" autocomplete="email" inputmode="email" aria-label="email for the beta" required>
+        <button class="arrow" id="go" type="submit" aria-label="Join the beta"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+      </div>
+      <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+    </form>
+    <p class="note" id="note" role="status" aria-live="polite"></p>
+
+    <div class="after" id="after">
+      <div class="t" id="t">you're on the list. it comes by email.</div>
+      <div class="n" id="n"></div>
+      <div class="ig" id="ig">
+        <div class="field-in">
+          <input type="text" id="handle" placeholder="Instagram, optional" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Instagram">
+          <button class="arrow" id="save" type="button" aria-label="Save"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 8h9.5M8.6 3.9 12.7 8l-4.1 4.1"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<p class="fine">Technology by Gualo Hawes</p>
+
+<script>
+(function () {
+  var API = 'https://vault-y6mf.vercel.app/api/beta/signup', SITE = 'https://vault-y6mf.vercel.app/api/site', PRODUCT = 'vhs';
+  var $ = function (id) { return document.getElementById(id); };
+  var q = new URLSearchParams(location.search), source = (q.get('ref') || q.get('utm_source') || (/instagram/i.test(navigator.userAgent) ? 'ig' : '') || 'direct').slice(0, 40);
+  var email = '', t0 = Date.now();
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── the tape: grain, a rolling tracking band, a little colour bleed — drawn at 1/8 size, ~24 fps, paused when hidden ── */
+  var cv = $('tape'), cx = cv.getContext('2d'), W = 0, H = 0, img = null, band = -0.2, last = 0;
+  function size() {
+    W = Math.max(64, Math.round(innerWidth / 8)); H = Math.max(48, Math.round(innerHeight / 8));
+    cv.width = W; cv.height = H; img = cx.createImageData(W, H);
+  }
+  function frame(now) {
+    if (!still) requestAnimationFrame(frame);
+    if (document.hidden || now - last < 41) return;
+    last = now;
+    var d = img.data, bandY = band * H, bandH = H * 0.11;
+    for (var y = 0; y < H; y++) {
+      var inBand = y > bandY && y < bandY + bandH, k = inBand ? 1 - Math.abs((y - bandY) / bandH - 0.5) * 2 : 0;
+      var shift = inBand ? Math.round((Math.random() - 0.5) * 6 * k) : 0, roll = Math.sin(y * 0.9 + now / 260) * 6;
+      for (var x = 0; x < W; x++) {
+        var i = (y * W + x) * 4, n = Math.random() * 70 + 120 + roll + k * 70;
+        d[i] = n + 18 + shift * 3;         // warm, slightly magenta…
+        d[i + 1] = n - 4;
+        d[i + 2] = n + 10 - shift * 3;     // …with a cool fringe where the band tears
+        d[i + 3] = 255;
+      }
+    }
+    cx.putImageData(img, 0, 0);
+    band += 0.0028; if (band > 1.15) band = -0.25;
+  }
+  size(); addEventListener('resize', size);
+  requestAnimationFrame(function (n) { frame(n); cv.classList.add('on'); });
+
+  /* ── camcorder counter ── */
+  if (!still) setInterval(function () {
+    var s = Math.floor((Date.now() - t0) / 1000), p = function (v) { return String(v).padStart(2, '0'); };
+    $('tc').textContent = 'SP ' + Math.floor(s / 3600) + ':' + p(Math.floor(s / 60) % 60) + ':' + p(s % 60);
+  }, 1000);
+
+  /* ── the line, letter by letter ── */
+  (function () {
+    var el = $('line'), txt = el.textContent, html = '', d = 1.1;
+    for (var i = 0; i < txt.length; i++) {
+      var ch = txt[i];
+      html += ch === ' ' ? '<span class="sp" aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">&nbsp;</span>' : '<span aria-hidden="true" style="animation-delay:' + d.toFixed(2) + 's">' + ch + '</span>';
+      d += ch === '.' ? 0.32 : 0.045;
+    }
+    el.innerHTML = html;
+  })();
+
+  /* ── the list (the same one as SYCSTEM, tagged "vhs") ── */
+  function post(body) {
+    body.product = PRODUCT;
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error(j && j.error || 'Something went wrong.'); return j; }); });
+  }
+  function placeText(n) { return n ? 'no. ' + String(n).padStart(3, '0') : ''; }
+  try { var saved = JSON.parse(localStorage.getItem('vhs_beta') || 'null'); if (saved && saved.email) { email = saved.email; $('n').textContent = placeText(saved.n); $('ig').classList.add('sent'); document.body.classList.add('in'); } } catch (e) {}
+
+  $('f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('email').value.trim(), note = $('note');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { note.textContent = 'That email doesn’t look right.'; note.className = 'note bad'; $('email').focus(); return; }
+    $('go').disabled = true; note.className = 'note'; note.textContent = '';
+    post({ email: v, source: source, website: $('website').value }).then(function (j) {
+      email = v; $('n').textContent = placeText(j.n);
+      if (j.already) { $('t').textContent = 'You’re already on the list.'; $('ig').classList.add('sent'); }
+      try { localStorage.setItem('vhs_beta', JSON.stringify({ email: v, n: j.n || 0 })); } catch (x) {}
+      document.body.classList.add('in');
+    }).catch(function (err) { note.textContent = String(err.message || err).slice(0, 80); note.className = 'note bad'; $('go').disabled = false; });
+  });
+  function saveHandle() {
+    var h = $('handle').value.trim(); if (!h) return;
+    $('save').disabled = true;
+    post({ email: email, handle: h, source: source }).then(function () { $('ig').classList.add('sent'); }, function () { $('save').disabled = false; });
+  }
+  $('save').addEventListener('click', saveHandle);
+  $('handle').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveHandle(); } });
+
+  /* ── one visit counted for gualo.site/admin (no cookies, no IPs) ── */
+  try {
+    var first = !sessionStorage.getItem('vhs_seen'); sessionStorage.setItem('vhs_seen', '1');
+    var ref = ''; try { ref = document.referrer ? new URL(document.referrer).host : ''; } catch (e) {}
+    var hit = JSON.stringify({ page: 'vhs', src: source === 'direct' ? '' : source, ref: ref, first: first });
+    if (navigator.sendBeacon) navigator.sendBeacon(SITE + '/hit', new Blob([hit], { type: 'text/plain' }));
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

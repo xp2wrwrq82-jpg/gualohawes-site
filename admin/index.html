@@ -104,6 +104,11 @@
   .live.off i { animation: none; opacity: .3; }
   @keyframes breathe { 0%, 100% { opacity: .3; transform: scale(.8); } 50% { opacity: 1; transform: scale(1); } }
   .row.fresh { animation: arrive 1.2s var(--ease) both, glow 7s ease-out both; }
+  .seg { display: flex; gap: 4px; justify-content: center; margin-top: 14px; }
+  .seg button { border: 0; background: none; cursor: pointer; font: 400 12px var(--sans, inherit); letter-spacing: .04em; color: #8e8e93; padding: 6px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+  .seg button.on { color: #1d1d1f; background: rgba(255,255,255,.8); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10); }
+  .seg button b { font-weight: 400; font-variant-numeric: tabular-nums; opacity: .6; margin-left: 4px; }
+  .tag { display: inline-block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8e8e93; padding: 1px 6px; border-radius: 4px; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.14); margin-right: 2px; }
   @keyframes arrive { from { opacity: 0; filter: blur(8px); transform: translateY(-8px); } to { opacity: 1; filter: none; transform: none; } }
   @keyframes glow { from { background: rgba(29,29,31,.07); } to { background: rgba(29,29,31,0); } }
   .count.tick { animation: tick 1s var(--ease); }
@@ -269,6 +274,11 @@
   <section class="pane" id="pane-list">
   <div class="head">
     <div class="count" id="count">–</div>
+    <div class="seg" id="seg" role="tablist" aria-label="Which beta">
+      <button type="button" class="on" data-p="">all<b id="segAll"></b></button>
+      <button type="button" data-p="sycstem">sycstem<b id="segSyc"></b></button>
+      <button type="button" data-p="vhs">vhs<b id="segVhs"></b></button>
+    </div>
     <div class="live off" id="live" title="live"><i></i><span id="liveT" hidden>connecting…</span></div>
     <div class="whisper" id="whisper" aria-live="polite"></div>
     <div class="acts">
@@ -451,7 +461,8 @@
     $('gate').hidden = true; $('room').hidden = false; $('fine').hidden = true;
     $('who').textContent = session.email || ''; known = null; shownTotal = null; pulseSig = null; load().then(pulse); showTab(TAB);
   }
-  var known = null, shownTotal = null, unseen = 0, baseTitle = document.title;
+  var known = null, shownTotal = null, unseen = 0, baseTitle = document.title, PROD = '', LAST = null;
+  try { PROD = localStorage.getItem('syc_admin_prod') || ''; } catch (e) {}
   function load() {
     return call('/list').then(function (j) {
       var seen = 0; try { seen = +localStorage.getItem(SEEN) || 0; } catch (e) {}
@@ -459,8 +470,12 @@
       if (known) j.rows.forEach(function (r) { if (!known[r.email]) { fresh[r.email] = 1; nFresh++; } });
       known = {}; j.rows.forEach(function (r) { known[r.email] = 1; });
       if (shownTotal !== null && j.total !== shownTotal) { var c = $('count'); c.classList.remove('tick'); void c.offsetWidth; c.classList.add('tick'); }
-      shownTotal = j.total;
-      $('count').textContent = j.total;
+      shownTotal = j.total; LAST = j;
+      var pc = j.products || {}; $('segAll').textContent = j.total; $('segSyc').textContent = pc.sycstem == null ? '' : pc.sycstem; $('segVhs').textContent = pc.vhs == null ? '' : pc.vhs;
+      // one beta's people, numbered in that beta's own line
+      var rows = PROD ? j.rows.filter(function (r) { return (r.products || ['sycstem']).indexOf(PROD) >= 0; }) : j.rows;
+      if (PROD) rows = rows.map(function (r, i) { return Object.assign({}, r, { n: rows.length - i }); });
+      $('count').textContent = rows.length;
       if (nFresh) {
         var newest = j.rows.filter(function (r) { return fresh[r.email]; })[0];
         arrival(nFresh, newest);
@@ -468,14 +483,15 @@
         if (TAB !== 'list') { var t = document.querySelector('.tab[data-tab=list]'), b = t.querySelector('.badge') || t.appendChild(document.createElement('span')); b.className = 'badge'; b.textContent = '+' + ((+b.textContent.replace('+', '') || 0) + nFresh); }
       }
       var al = $('alerts'); al.textContent = j.alerts.on ? '' : 'email alerts are off — the key isn’t set on Vercel.'; al.className = 'status' + (j.alerts.on ? '' : ' bad'); al.hidden = j.alerts.on;
-      $('list').innerHTML = j.rows.length ? j.rows.map(function (r) {
+      $('list').innerHTML = rows.length ? rows.map(function (r) {
         var meta = [];
+        if (!PROD) meta.push((r.products || ['sycstem']).map(function (p) { return '<span class="tag">' + esc(p) + '</span>'; }).join(''));
         if (r.handle) meta.push('<a href="https://instagram.com/' + encodeURIComponent(r.handle) + '" target="_blank" rel="noreferrer">@' + esc(r.handle) + '</a>');
         meta.push('from ' + esc(FROM[r.source] || r.source || 'direct link'));
         return '<div class="row' + (seen && r.n > seen ? ' new' : '') + (fresh[r.email] ? ' fresh' : '') + '"><span class="no">' + place(r.n) + '</span>' +
           '<span class="em"><a href="mailto:' + esc(r.email) + '">' + esc(r.email) + '</a></span><span class="at">' + when(r.at) + '</span>' +
           '<span class="meta">' + meta.join(' · ') + '</span></div>';
-      }).join('') : '<div class="empty">no one yet. post the link.</div>';
+      }).join('') : '<div class="empty">' + (PROD === 'vhs' ? 'no one yet. post gualo.site/vhs.' : 'no one yet. post the link.') + '</div>';
       try { localStorage.setItem(SEEN, String(j.total)); } catch (e) {}
       var devs = j.devices || [];
       $('devLbl').textContent = devs.length ? BIO === 'a passkey' ? 'passkeys' : 'face id / touch id' : 'no face id / touch id yet';
@@ -576,12 +592,20 @@
   });
   $('csv').addEventListener('click', function () {
     var b = this; b.disabled = true;
-    call('/csv', { raw: true }).then(function (r) { return r.blob(); }).then(function (blob) {
+    call('/csv' + (PROD ? '?product=' + PROD : ''), { raw: true }).then(function (r) { return r.blob(); }).then(function (blob) {
       var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      a.download = 'sycstem-beta-list-' + new Date().toISOString().slice(0, 10) + '.csv';
+      a.download = (PROD || 'all') + '-beta-list-' + new Date().toISOString().slice(0, 10) + '.csv';
       document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
     }).catch(function (err) { status(err.message, true); }).then(function () { b.disabled = false; });
   });
+  /* ── which beta the list shows ── */
+  function segUI() { [].forEach.call(document.querySelectorAll('#seg button'), function (b) { b.classList.toggle('on', b.getAttribute('data-p') === PROD); }); $('csv').textContent = PROD ? 'download ' + PROD + ' csv' : 'download csv'; }
+  $('seg').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    PROD = b.getAttribute('data-p'); try { localStorage.setItem('syc_admin_prod', PROD); } catch (x) {}
+    segUI(); load();
+  });
+  segUI();
   /* ── tabs ── */
   var TAB = 'list'; try { TAB = localStorage.getItem('syc_admin_tab') || 'list'; } catch (e) {}
   function showTab(t) {
@@ -599,9 +623,9 @@
   var SRC = { ig: 'Instagram', direct: 'direct / typed', google: 'Google', x: 'X', tiktok: 'TikTok', youtube: 'YouTube', site: 'gualo.site', test: 'test' };
   function loadStats() {
     return call('/stats').then(function (j) {
-      var t = j.totals; $('v7').textContent = t.home7 + t.beta7;
+      var t = j.totals; $('v7').textContent = t.home7 + t.beta7 + (t.vhs7 || 0);
       $('vnums').innerHTML = [[t.beta7, 'beta page · 7 days'], [t.home7, 'gualo.site · 7 days'], [t.beta30 + t.home30, 'visits · 30 days'],
-        [t.signups30, 'joined the list · 30 days'], [t.beta30 ? Math.round(100 * t.signups30 / t.beta30) + '%' : '–', 'of beta-page visits joined']]
+        [t.vhs7 || 0, 'vhs page · 7 days'], [t.signups30, 'joined the list · 30 days'], [t.beta30 ? Math.round(100 * t.signups30 / t.beta30) + '%' : '–', 'of beta-page visits joined']]
         .map(function (n) { return '<div><b>' + n[0] + '</b><span>' + n[1] + '</span></div>'; }).join('');
       var max = Math.max(1, Math.max.apply(null, j.days.map(function (d) { return d.home + d.beta; })));
       $('bars').innerHTML = j.days.map(function (d, i) {
