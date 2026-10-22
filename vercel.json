@@ -40,6 +40,10 @@
       "continue": true
     },
     {
+      "src": "/vhs/?",
+      "dest": "/vhs/index.html"
+    },
+    {
       "handle": "filesystem"
     }
   ]
