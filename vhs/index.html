@@ -85,9 +85,64 @@
 
   .fine { position: fixed; z-index: 2; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0)); text-align: center;
     font-size: 11px; letter-spacing: .04em; color: #8e8e93; opacity: 0; animation: appear 1.6s var(--ease) 3s forwards; }
+  /* "try the camera" — one quiet line under the pill */
+  .try { margin-top: 18px; border: 0; background: none; cursor: pointer; font: 400 12px var(--sans); letter-spacing: .06em; color: var(--grey);
+    padding: 6px 10px; border-radius: 999px; opacity: 0; animation: appear 1.6s var(--ease) 2.8s forwards; transition: color .2s, background .2s; }
+  .try:hover { color: var(--ink); background: rgba(255,255,255,.6); }
+  body.in .try { animation-delay: .4s; }
+
+  /* ── the camera: the picture fills the screen; glass pills float on it ── */
+  body.camming { overflow: hidden; }
+  .cam { position: fixed; inset: 0; z-index: 50; background: #0b0b0c; color: #fff; }
+  .cam[hidden] { display: none; }
+  .cam canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; image-rendering: auto; }
+  .cam video.src { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .cam .pill { background: rgba(255,255,255,.82); backdrop-filter: blur(20px) saturate(1.2); -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow: inset 0 0 0 .5px rgba(0,0,0,.10), 0 10px 30px rgba(0,0,0,.18); border-radius: 999px; color: var(--ink); }
+  .c-top { position: absolute; left: 0; right: 0; top: calc(16px + env(safe-area-inset-top, 0)); display: flex; align-items: center; justify-content: space-between;
+    padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); pointer-events: none; }
+  .c-top > * { pointer-events: auto; }
+  .c-osd { font: 500 12px/1 var(--mono); letter-spacing: .14em; color: #fff; text-shadow: 0 0 6px rgba(0,0,0,.5); display: flex; gap: 10px; align-items: center; min-width: 120px; }
+  .c-osd i { width: 8px; height: 8px; border-radius: 50%; background: #e0412f; opacity: 0; }
+  .cam.recording .c-osd i { opacity: 1; animation: blink 1.2s steps(1) infinite; }
+  .c-osd .tc { font-variant-numeric: tabular-nums; opacity: 0; }
+  .cam.recording .c-osd .tc { opacity: 1; }
+  .seg2 { display: flex; padding: 4px; gap: 2px; }
+  .seg2 button { border: 0; background: none; cursor: pointer; font: 500 11px/1 var(--mono); letter-spacing: .12em; color: var(--grey); padding: 8px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+  .seg2 button.on { color: var(--ink); background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .c-x { width: 36px; height: 36px; border: 0; display: grid; place-items: center; cursor: pointer; min-width: 36px; }
+  .c-x svg { width: 14px; height: 14px; }
+  .c-right { min-width: 120px; display: flex; justify-content: flex-end; }
+  .c-bot { position: absolute; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0)); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 0 max(22px, env(safe-area-inset-right, 0px)) 0 max(22px, env(safe-area-inset-left, 0px)); }
+  .c-mid { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .c-mode button { font-family: var(--sans); letter-spacing: .04em; font-size: 12px; font-weight: 400; }
+  .shoot { width: 70px; height: 70px; border-radius: 50%; border: 0; cursor: pointer; padding: 0; display: grid; place-items: center;
+    background: rgba(255,255,255,.28); box-shadow: inset 0 0 0 3px rgba(255,255,255,.95), 0 10px 30px rgba(0,0,0,.25); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .shoot i { width: 54px; height: 54px; border-radius: 50%; background: #fff; transition: all .25s var(--ease); }
+  .shoot:active i { transform: scale(.92); }
+  .cam.video .shoot i { background: #e0412f; }
+  .cam.recording .shoot i { width: 26px; height: 26px; border-radius: 6px; }
+  .c-thumb { justify-self: start; width: 46px; height: 46px; border-radius: 12px; overflow: hidden; border: 0; padding: 0; cursor: pointer; background: rgba(255,255,255,.2); box-shadow: 0 0 0 1.5px rgba(255,255,255,.9); }
+  .c-thumb[hidden] { visibility: hidden; display: block; }
+  .c-thumb img, .c-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .c-flip { justify-self: end; width: 46px; height: 46px; border: 0; display: grid; place-items: center; cursor: pointer; }
+  .c-flip[hidden] { visibility: hidden; display: grid; }
+  .c-flip svg { width: 20px; height: 20px; }
+  .c-msg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: 300px; padding: 14px 20px; text-align: center; font-size: 13px; letter-spacing: .02em; }
+  .c-msg[hidden] { display: none; }
+  .cam.flash::after { content: ''; position: absolute; inset: 0; background: #fff; animation: flash .35s ease-out forwards; pointer-events: none; }
+  @keyframes flash { from { opacity: .7; } to { opacity: 0; } }
+  .c-review { position: absolute; inset: 0; z-index: 3; background: rgba(11,11,12,.92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    padding: calc(24px + env(safe-area-inset-top, 0)) 20px calc(24px + env(safe-area-inset-bottom, 0)); }
+  .c-review[hidden] { display: none; }
+  .c-show { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
+  .c-show img, .c-show video { max-width: 100%; max-height: 100%; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .c-acts { display: flex; gap: 10px; }
+  .c-acts button { height: 46px; padding: 0 24px; border: 0; cursor: pointer; font: 400 14px var(--sans); letter-spacing: .02em; }
   @keyframes appear { from { opacity: 0; filter: blur(8px); } to { opacity: 1; filter: none; } }
   @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; } .mark, form, .line span, .fine, .osd { opacity: 1; filter: none; } .osd .dot { opacity: .75; }
+    * { animation: none !important; } .mark, form, .line span, .fine, .osd, .try { opacity: 1; filter: none; } .osd .dot { opacity: .75; }
   }
 </style>
 </head>
@@ -112,6 +167,7 @@
       <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     </form>
     <p class="note" id="note" role="status" aria-live="polite"></p>
+    <button class="try" id="try" type="button">try the camera</button>
 
     <div class="after" id="after">
       <div class="t" id="t">you're on the list. it comes by email.</div>
@@ -126,6 +182,32 @@
   </div>
 </main>
 <p class="fine">Technology by Gualo Hawes</p>
+
+<div class="cam" id="cam" hidden aria-label="VHS camera">
+  <canvas id="view"></canvas>
+  <video class="src" id="cVid" muted playsinline autoplay></video>
+  <div class="c-top">
+    <div class="c-osd" aria-live="polite"><i></i><span id="cRec">STBY</span><span class="tc" id="cTc">0:00:00</span></div>
+    <div class="pill seg2" id="cSpeed" role="tablist" aria-label="Tape speed">
+      <button type="button" data-s="SP" class="on">SP</button><button type="button" data-s="LP">LP</button><button type="button" data-s="EP">EP</button>
+    </div>
+    <div class="c-right"><button class="pill c-x" id="cClose" type="button" aria-label="Close"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l10 10M12 2 2 12"/></svg></button></div>
+  </div>
+  <div class="c-bot">
+    <button class="c-thumb" id="cThumb" type="button" aria-label="Last shot" hidden></button>
+    <div class="c-mid">
+      <div class="pill seg2 c-mode" id="cMode" role="tablist" aria-label="Photo or video"><button type="button" data-m="photo" class="on">photo</button><button type="button" data-m="video">video</button></div>
+      <button class="shoot" id="cShoot" type="button" aria-label="Shoot"><i></i></button>
+    </div>
+    <button class="pill c-flip" id="cFlip" type="button" aria-label="Flip camera" hidden><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8a7 7 0 0 1 12.2-3M16.5 12a7 7 0 0 1-12.2 3"/><path d="M15.9 1.8v3.4h-3.4M4.1 18.2v-3.4h3.4"/></svg></button>
+  </div>
+  <div class="pill c-msg" id="cMsg" hidden></div>
+  <div class="c-review" id="cReview" hidden>
+    <div class="c-show" id="cShow"></div>
+    <div class="c-acts"><button class="pill" id="cSave" type="button">save</button><button class="pill" id="cBack" type="button">back</button></div>
+  </div>
+</div>
+<script src="/vhs/cam.js" defer></script>
 
 <script>
 (function () {
@@ -208,6 +290,11 @@
   }
   $('save').addEventListener('click', saveHandle);
   $('handle').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveHandle(); } });
+
+  /* ── the camera (cam.js): opens from the link, or straight away at gualo.site/vhs#camera ── */
+  function openCam() { if (!window.VHSCam) return; window.VHSCam.init(); window.VHSCam.open(); }
+  $('try').addEventListener('click', openCam);
+  addEventListener('load', function () { if (location.hash === '#camera') openCam(); });
 
   /* ── one visit counted for gualo.site/admin (no cookies, no IPs) ── */
   try {
