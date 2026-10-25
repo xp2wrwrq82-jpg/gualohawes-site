@@ -47,6 +47,7 @@
   .p .who { position: absolute; bottom: -4%; width: 64%; height: 50%; object-fit: contain; object-position: bottom; pointer-events: none; -webkit-user-drag: none;
     filter: invert(1) brightness(.52) contrast(1.05); opacity: .78; transform: translateZ(70px); transition: transform .9s var(--ease); }
   .p .who.l { left: -50%; } .p .who.r { right: -50%; }
+  @media (max-width: 720px) { .p .who { width: 46%; height: 36%; bottom: -6%; } .p .who.l { left: -16%; } .p .who.r { right: -16%; } }
   .p:hover .card, .p.focus .card { transform: rotateY(0deg) rotateX(0deg) scale(1.03); }
   .p:hover .nm, .p.focus .nm { opacity: 1; transform: none; }
 
