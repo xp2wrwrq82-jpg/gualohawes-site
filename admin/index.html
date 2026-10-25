@@ -127,6 +127,17 @@
   .whisper.go { animation: whisper 4.2s var(--ease) forwards; }
   @keyframes whisper { 0% { opacity: 0; filter: blur(6px); } 18%, 70% { opacity: 1; filter: none; } 100% { opacity: 0; filter: blur(4px); } }
   @media (prefers-reduced-motion: reduce) { .bloom, .veil.breathe { animation: none !important; } }
+  .dprow { display: grid; grid-template-columns: 26px 54px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 4px; }
+  .dprow + .dprow { box-shadow: inset 0 .5px 0 rgba(0,0,0,.08); }
+  .dprow.off { opacity: .5; }
+  .dprow .thumb { width: 54px; height: 54px; border-radius: 10px; overflow: hidden; background: #111; }
+  .dprow .thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .dprow .f { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); gap: 6px; }
+  .dprow .f .fld { height: 32px; font-size: 12px; padding: 0 10px; border-radius: 9px; }
+  .dprow .kind { grid-column: 1 / -1; font-size: 10.5px; letter-spacing: .06em; color: var(--fine); }
+  .dprow .mv { display: flex; flex-direction: column; gap: 4px; }
+  .dprow input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--ink); }
+  @media (max-width: 560px) { .dprow { grid-template-columns: 22px 44px minmax(0, 1fr); } .dprow .mv { grid-column: 3; flex-direction: row; } .dprow .f { grid-template-columns: 1fr; } .dprow .thumb { width: 44px; height: 44px; } }
   .homecard { margin-top: 34px; align-items: center; text-align: center; }
   .homecard .note2 { font-size: 12px; color: var(--fine); line-height: 1.5; }
   .homecard .note2 a { color: var(--grey); }
@@ -270,6 +281,7 @@
     <button class="tab" type="button" data-tab="page">beta page</button>
     <button class="tab" type="button" data-tab="site">site</button>
     <button class="tab" type="button" data-tab="shop">shop</button>
+    <button class="tab" type="button" data-tab="drop">drop</button>
   </nav>
   <section class="pane" id="pane-list">
   <div class="head">
@@ -329,6 +341,15 @@
     <div class="ed" id="edSite"></div>
   </section>
   <section class="pane" id="pane-shop" hidden><div class="ed" id="edShop"></div></section>
+  <section class="pane" id="pane-drop" hidden>
+    <div class="sec homecard">
+      <div class="lbl" style="font-size:11px;letter-spacing:.08em;color:var(--fine)">gualo.site/drop right now</div>
+      <div class="seg" id="dropSeg"><button type="button" data-v="draft">draft</button><button type="button" data-v="live">live</button></div>
+      <div class="pill" style="width:100%;max-width:360px"><input type="text" id="dropLine" maxlength="60" placeholder="the drop." aria-label="The drop's line" autocomplete="off"></div>
+      <div class="note2" id="dropNote"></div>
+    </div>
+    <div class="ed" id="edDrop"></div>
+  </section>
   <div class="savebar" id="savebar" hidden>
     <span class="msg" id="sMsg"></span>
     <button class="btn ink" id="sSave" type="button" disabled>save</button>
@@ -540,6 +561,59 @@
     w.classList.add('go');
   }
 
+  /* ── the drop: what the invited can get ── */
+  var drop = null, dropSaved = null, liveArm = false;
+  var clone = function (o) { return JSON.parse(JSON.stringify(o)); };
+  function dropView() {
+    if (!drop) return;
+    [].forEach.call($('dropSeg').children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === drop.mode); });
+    if (document.activeElement !== $('dropLine')) $('dropLine').value = drop.line || '';
+    $('dropNote').innerHTML = drop.mode === 'live' ? 'live — anyone with <a href="/drop/" target="_blank" rel="noopener">gualo.site/drop</a> can see it (never on Google).'
+      : 'draft — only you can see <a href="/drop/" target="_blank" rel="noopener">gualo.site/drop</a>.';
+    $('edDrop').innerHTML = '<h3>products — the order they float in</h3><div class="sec">' + drop.items.map(function (it, i) {
+      var P = 'items.' + i;
+      return '<div class="dprow' + (it.on ? '' : ' off') + '"><input type="checkbox" data-d="' + P + '.on"' + (it.on ? ' checked' : '') + ' aria-label="Show ' + A(it.name) + '">' +
+        '<div class="thumb"><img src="/drop/shots/' + A(it.key) + '.webp" alt="" loading="lazy"></div>' +
+        '<div class="f"><div class="kind">' + (it.kind === 'app' ? 'mac app' : 'premiere plugin') + '</div>' +
+        '<input class="fld" data-d="' + P + '.name" value="' + A(it.name) + '" placeholder="name" aria-label="Name">' +
+        '<input class="fld" data-d="' + P + '.tag" value="' + A(it.tag) + '" placeholder="one line" aria-label="One line">' +
+        '<input class="fld" data-d="' + P + '.href" value="' + A(it.href) + '" placeholder="download link (empty = soon)" aria-label="Download link">' +
+        '<input class="fld" data-d="' + P + '.cta" value="' + A(it.cta) + '" placeholder="button (Get)" aria-label="Button text"></div>' +
+        '<div class="mv"><button class="ib" type="button" data-dmv="' + i + '" data-d2="-1" aria-label="Move up">↑</button><button class="ib" type="button" data-dmv="' + i + '" data-d2="1" aria-label="Move down">↓</button></div></div>';
+    }).join('') + '</div>';
+  }
+  function loadDrop() {
+    return call('/drop').then(function (j) { drop = j.drop; dropSaved = clone(j.drop); dirty = false; $('sSave').disabled = true; smsg(''); dropView(); })
+      .catch(function (err) { if (err.message !== 'signed out') smsg(err.message, true); });
+  }
+  function saveDrop() {
+    $('sSave').disabled = true; smsg('saving…');
+    return call('/drop', { method: 'POST', body: { drop: drop } }).then(function (j) { drop = j.drop; dropSaved = clone(j.drop); setDirty(false); dropView(); smsg('saved — live on the page within about 15 seconds.'); })
+      .catch(function (err) { smsg(err.message, true); $('sSave').disabled = false; });
+  }
+  $('edDrop').addEventListener('input', function (e) {
+    var p = e.target.getAttribute('data-d'); if (!p || !drop) return; var k = p.split('.'), it = drop.items[+k[1]];
+    if (e.target.type === 'checkbox') { it.on = e.target.checked; e.target.closest('.dprow').classList.toggle('off', !it.on); } else it[k[2]] = e.target.value;
+    setDirty(true);
+  });
+  $('edDrop').addEventListener('change', function (e) { if (e.target.type === 'checkbox') e.target.dispatchEvent(new Event('input', { bubbles: true })); });
+  $('edDrop').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-dmv]'); if (!b || !drop) return; var i = +b.getAttribute('data-dmv'), j = i + (+b.getAttribute('data-d2'));
+    if (j < 0 || j >= drop.items.length) return; var x = drop.items[i]; drop.items[i] = drop.items[j]; drop.items[j] = x; setDirty(true); dropView();
+  });
+  // draft / live and the line save on their own: an unfinished edit elsewhere (a bad link) can never block them
+  function quickSave(patch, msg) {
+    return call('/drop', { method: 'POST', body: { drop: Object.assign(clone(dropSaved), patch) } }).then(function (j) {
+      dropSaved = clone(j.drop); drop.mode = j.drop.mode; drop.line = j.drop.line; dropView(); smsg(msg);
+    }).catch(function (err) { smsg(err.message, true); dropView(); });
+  }
+  $('dropSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || !drop) return; var v = b.getAttribute('data-v'); if (v === drop.mode) return;
+    if (v === 'live' && !liveArm) { liveArm = true; b.textContent = 'tap again to go live'; setTimeout(function () { liveArm = false; b.textContent = 'live'; }, 3000); return; }
+    liveArm = false; b.textContent = v; quickSave({ mode: v }, v === 'live' ? 'live — anyone with the link can see it.' : 'back to draft — only you can see it.');
+  });
+  $('dropLine').addEventListener('change', function () { if (drop) quickSave({ line: this.value }, 'saved.'); });
+
   /* ── gualo.site right now: soon / open ── */
   var homeMode = 'soon', openArm = false;
   function homeView() {
@@ -613,9 +687,9 @@
     if (t === 'list') { var bd = document.querySelector('.tab[data-tab=list] .badge'); if (bd) bd.remove(); }
     [].forEach.call(document.querySelectorAll('.tab'), function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === t); });
     $('pane-list').hidden = t !== 'list'; $('pane-visits').hidden = t !== 'visits'; $('pane-page').hidden = t !== 'page';
-    $('pane-site').hidden = t !== 'site'; $('pane-shop').hidden = t !== 'shop'; $('savebar').hidden = t !== 'site' && t !== 'shop';
-    $('devs').hidden = t === 'site' || t === 'shop';
-    if (t === 'visits') loadStats(); if (t === 'page') loadCfg(); if (t === 'site' || t === 'shop') loadContent(); if (t === 'site') loadHome();
+    $('pane-site').hidden = t !== 'site'; $('pane-shop').hidden = t !== 'shop'; $('pane-drop').hidden = t !== 'drop'; $('savebar').hidden = t !== 'site' && t !== 'shop' && t !== 'drop';
+    $('devs').hidden = t === 'site' || t === 'shop' || t === 'drop';
+    if (t === 'visits') loadStats(); if (t === 'page') loadCfg(); if (t === 'site' || t === 'shop') loadContent(); if (t === 'site') loadHome(); if (t === 'drop') loadDrop();
   }
   $('tabs').addEventListener('click', function (e) { var b = e.target.closest('.tab'); if (b) showTab(b.getAttribute('data-tab')); });
 
@@ -799,6 +873,7 @@
   ['edSite', 'edShop'].forEach(function (id) { $(id).addEventListener('click', onAct); });
   $('edShop').addEventListener('click', function (e) { var b = e.target.closest('#shopSeg button'); if (!b) return; model.shopOn = b.getAttribute('data-v') === 'on'; setDirty(true); renderEd(); });
   $('sSave').addEventListener('click', function () {
+    if (TAB === 'drop') { saveDrop(); return; }
     var b = this; b.disabled = true; smsg('saving…');
     call('/content', { method: 'POST', body: { content: model } }).then(function (j) { model = j.content; setDirty(false); renderEd(); smsg('saved — live on gualo.site within about 15 seconds.'); })
       .catch(function (err) { smsg(err.message, true); b.disabled = false; });
