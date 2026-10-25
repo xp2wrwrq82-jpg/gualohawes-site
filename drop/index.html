@@ -43,6 +43,10 @@
     background: radial-gradient(closest-side, rgba(20,20,30,.22), rgba(20,20,30,0)); filter: blur(10px); }
   .p .nm { position: absolute; left: 0; right: 0; bottom: -38px; text-align: center; font-size: 13px; letter-spacing: .06em; color: var(--line);
     opacity: 0; transform: translateY(6px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+  /* each app's character — the brand's glass figure (dark glass on the white room), standing at its app */
+  .p .who { position: absolute; bottom: -4%; width: 64%; height: 50%; object-fit: contain; object-position: bottom; pointer-events: none; -webkit-user-drag: none;
+    filter: invert(1) brightness(.52) contrast(1.05); opacity: .78; transform: translateZ(70px); transition: transform .9s var(--ease); }
+  .p .who.l { left: -50%; } .p .who.r { right: -50%; }
   .p:hover .card, .p.focus .card { transform: rotateY(0deg) rotateX(0deg) scale(1.03); }
   .p:hover .nm, .p.focus .nm { opacity: 1; transform: none; }
 
@@ -69,6 +73,8 @@
   #detail .shot { justify-self: center; width: 100%; max-width: 360px; border-radius: 18px; overflow: hidden; transform: perspective(1100px) rotateY(-8deg) rotateX(3deg);
     box-shadow: inset 0 0 0 .5px rgba(255,255,255,.14), 0 40px 70px -20px rgba(18,18,28,.4); }
   #detail .shot img { display: block; width: 100%; }
+  #detail .ic { display: block; width: 56px; height: 56px; margin-bottom: 16px; filter: drop-shadow(0 10px 18px rgba(20,20,30,.22)); }
+  #detail .ic[hidden] { display: none; }
   #detail .kind { font-size: 11px; letter-spacing: .08em; color: var(--fine); text-transform: lowercase; }
   #detail h2 { margin-top: 10px; font-size: 34px; font-weight: 600; letter-spacing: -.01em; }
   #detail .tag { margin-top: 10px; font-size: 15px; line-height: 1.45; color: var(--grey); }
@@ -82,6 +88,7 @@
     #detail .sheet { grid-template-columns: 1fr; gap: 24px; padding: 28px 22px 26px; text-align: center; }
     #detail .shot { max-width: 260px; transform: perspective(1100px) rotateX(4deg); }
     #detail h2 { font-size: 28px; }
+    #detail .ic { margin: 0 auto 14px; }
   }
   #soon { position: fixed; inset: 0; z-index: 2; display: none; place-items: center; font-size: 14px; letter-spacing: .06em; color: var(--line); }
   body.locked #soon { display: grid; }
@@ -103,7 +110,7 @@
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dName">
     <button class="x" id="dClose" type="button">close</button>
     <div class="shot"><img id="dImg" alt=""></div>
-    <div><div class="kind" id="dKind"></div><h2 id="dName"></h2><p class="tag" id="dTag"></p><a class="get" id="dGet" target="_blank" rel="noopener">Get</a></div>
+    <div><img class="ic" id="dIcon" alt="" hidden><div class="kind" id="dKind"></div><h2 id="dName"></h2><p class="tag" id="dTag"></p><a class="get" id="dGet" target="_blank" rel="noopener">Get</a></div>
   </div>
 </div>
 
@@ -133,6 +140,7 @@
 
   /* ── the depth field ── */
   var P = [], N = 0, GAP = 680, world = $('world');
+  var FAMILY = { prism: 1, stash: 1, bucket: 1, aim: 1 };   // the apps' icon + character family (SYCSTEM-BRAND/app-family)
   // a hand-made composition (never random — random reads as debris): side, height, turn
   var LAY = [[-.24, .02, 14], [.26, -.10, -16], [-.30, .14, 12], [.18, .10, -10], [-.12, -.12, 8], [.32, .04, -18], [-.28, -.04, 16], [.12, .16, -8],
              [-.20, .12, 12], [.28, -.14, -14], [-.34, .0, 18], [.22, .08, -12], [-.10, -.16, 6], [.30, .14, -16], [-.26, .06, 14], [.16, -.06, -10], [-.18, .1, 10]];
@@ -145,7 +153,7 @@
       el.className = 'p'; el.tabIndex = 0;
       el.style.setProperty('--w', w + 'px'); el.style.setProperty('--r', (app && it.key !== 'aim' && it.key !== 'bucket' ? 16 : 14) + 'px');
       el.style.setProperty('--ry', L[2] + 'deg'); el.style.setProperty('--rx', (i % 2 ? -3 : 3) + 'deg');
-      el.innerHTML = '<div class="floor"></div><div class="card"><img src="/drop/shots/' + it.key + '.webp" width="' + s[0] + '" height="' + s[1] + '" alt="' + esc(it.name) + '" loading="' + (i < 4 ? 'eager' : 'lazy') + '" decoding="async"></div><figcaption class="nm">' + esc(it.name.toLowerCase()) + '</figcaption>';
+      el.innerHTML = '<div class="floor"></div><div class="card"><img src="/drop/shots/' + it.key + '.webp" width="' + s[0] + '" height="' + s[1] + '" alt="' + esc(it.name) + '" loading="' + (i < 4 ? 'eager' : 'lazy') + '" decoding="async"></div>' + (FAMILY[it.key] ? '<img class="who ' + (L[0] < 0 ? 'l' : 'r') + '" src="/drop/family/' + it.key + '.webp" alt="" aria-hidden="true" decoding="async">' : '') + '<figcaption class="nm">' + esc(it.name.toLowerCase()) + '</figcaption>';
       el.addEventListener('click', function () { open(it); });
       el.addEventListener('keydown', function (e) { if (e.key === 'Enter') open(it); });
       world.appendChild(el);
@@ -189,6 +197,7 @@
   function open(it) {
     $('dImg').src = '/drop/shots/' + it.key + '.webp'; $('dImg').alt = it.name;
     $('dKind').textContent = (it.kind === 'app' ? 'mac app' : 'premiere plugin') + ' · beta';
+    if (FAMILY[it.key]) { $('dIcon').src = '/drop/family/' + it.key + '-icon.webp'; $('dIcon').hidden = false; } else $('dIcon').hidden = true;
     $('dName').textContent = it.name; $('dTag').textContent = it.tag || '';
     var g = $('dGet');
     if (it.href) { g.href = it.href; g.textContent = it.cta || 'Get'; g.classList.remove('soon'); g.removeAttribute('aria-disabled'); }
