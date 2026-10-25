@@ -44,6 +44,13 @@
       "dest": "/vhs/index.html"
     },
     {
+      "src": "/drop(/.*)?",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow"
+      },
+      "continue": true
+    },
+    {
       "handle": "filesystem"
     }
   ]
