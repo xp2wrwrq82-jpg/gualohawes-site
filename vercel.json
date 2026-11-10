@@ -51,7 +51,7 @@
       "continue": true
     },
     {
-      "src": "/vyde(/.*)?",
+      "src": "/vyde/xvws1070ekako4(/.*)?",
       "headers": {
         "X-Robots-Tag": "noindex, nofollow, noarchive",
         "Referrer-Policy": "no-referrer",
