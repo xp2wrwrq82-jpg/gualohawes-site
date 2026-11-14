@@ -60,6 +60,14 @@
       "continue": true
     },
     {
+      "src": "/t/p44dy7yswc5rn7(/.*)?",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "Referrer-Policy": "no-referrer"
+      },
+      "continue": true
+    },
+    {
       "handle": "filesystem"
     }
   ]
