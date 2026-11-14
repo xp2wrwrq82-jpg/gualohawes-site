@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#000000">
 <title>SYCSTEM</title>
-<!-- BETA INTRO TAPE PAGE 0.2.0 (draft). One tape, nothing else. Lives at a hidden path on gualo.site; nothing links to it but the email. -->
+<!-- BETA INTRO TAPE PAGE 0.2.1 (draft). One tape, nothing else. Lives at a hidden path on gualo.site; nothing links to it but the email. -->
 <style>
   html,body{margin:0;height:100%;background:#000;}
   body{display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -20,12 +20,13 @@
 </head>
 <body>
 <div class="tape" id="tape">
-  <video id="v" src="tape.mp4" poster="poster.jpg" playsinline preload="metadata"></video>
+  <video id="v" src="tape.mp4" poster="poster.jpg" playsinline preload="auto"></video>
   <button id="b" aria-label="Play the tape"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" fill="none" stroke="#111" stroke-width="5"/><path d="M71 60v80l69-40z" fill="#E22C1A"/></svg></button>
 </div>
 <script>
   var t=document.getElementById('tape'),v=document.getElementById('v');
   document.getElementById('b').addEventListener('click',function(){t.classList.add('on');v.play();});
+  var p=v.play(); if(p&&p.then){p.then(function(){t.classList.add('on');}).catch(function(){});}   // it starts by itself where the browser allows sound; otherwise the play mark waits for one tap
   v.addEventListener('ended',function(){v.pause();});   // it stops on black; nothing follows
 </script>
 </body>
