@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#000000">
 <title>SYCSTEM</title>
-<!-- BETA INTRO TAPE PAGE 0.1.0 (draft). One tape, nothing else. Lives at a hidden path on gualo.site; nothing links to it but the email. -->
+<!-- BETA INTRO TAPE PAGE 0.2.0 (draft). One tape, nothing else. Lives at a hidden path on gualo.site; nothing links to it but the email. -->
 <style>
   html,body{margin:0;height:100%;background:#000;}
   body{display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -14,13 +14,14 @@
   video{display:block;width:100%;height:100%;object-fit:contain;background:#000;}
   button{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   button:focus-visible{outline:1px solid #E22C1A;outline-offset:-8px;}
+  button svg{position:absolute;left:50%;top:47%;width:17%;transform:translate(-50%,-50%);}
   .tape.on button{display:none;}
 </style>
 </head>
 <body>
 <div class="tape" id="tape">
   <video id="v" src="tape.mp4" poster="poster.jpg" playsinline preload="metadata"></video>
-  <button id="b" aria-label="Play the tape"></button>
+  <button id="b" aria-label="Play the tape"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="93" fill="none" stroke="#111" stroke-width="5"/><path d="M71 60v80l69-40z" fill="#E22C1A"/></svg></button>
 </div>
 <script>
   var t=document.getElementById('tape'),v=document.getElementById('v');
